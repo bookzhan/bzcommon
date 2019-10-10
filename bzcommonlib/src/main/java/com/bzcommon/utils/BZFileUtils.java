@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -406,5 +407,24 @@ public class BZFileUtils {
         }
 
         return new File(fileDir, fileName);
+    }
+
+    private void saveFile(String path, String content) {
+        FileWriter writer = null;
+        try {
+            writer = new FileWriter(path);
+            writer.write(content);
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (null != writer) {
+                try {
+                    writer.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
