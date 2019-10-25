@@ -409,7 +409,7 @@ public class BZFileUtils {
         return new File(fileDir, fileName);
     }
 
-    private void saveFile(String path, String content) {
+    public static void saveFile(String path, String content) {
         FileWriter writer = null;
         try {
             writer = new FileWriter(path);
