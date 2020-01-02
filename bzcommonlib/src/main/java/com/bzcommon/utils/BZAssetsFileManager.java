@@ -21,15 +21,14 @@ public class BZAssetsFileManager {
         //处理资产目录下的文件
         try {
             String fileDirPath = context.getFilesDir().getAbsolutePath();
-            String fileName = BZMD5Util.md5(path);
-            String substring = path.substring(path.lastIndexOf("."), path.length());
-
-            String tempPath = fileDirPath + "/" + fileName + substring;
-            if (new File(tempPath).exists()) {
-                return tempPath;
+            String finalPath = fileDirPath + "/" + path;
+            if (new File(finalPath).exists()) {
+                return finalPath;
             }
-            BZFileUtils.fileCopy(context.getAssets().open(path), tempPath);
-            return tempPath;
+            BZFileUtils.createNewFile(finalPath);
+
+            BZFileUtils.fileCopy(context.getAssets().open(path), finalPath);
+            return finalPath;
         } catch (Throwable e) {
             BZLogUtil.e(TAG, e);
         }
