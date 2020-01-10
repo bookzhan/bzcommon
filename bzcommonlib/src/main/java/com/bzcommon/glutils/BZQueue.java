@@ -40,21 +40,27 @@ public class BZQueue<T> {
         if (arrayList.isEmpty()) {
             return null;
         }
-        return arrayList.get(0);
+        T t = arrayList.get(0);
+        arrayList.remove(t);
+        return t;
     }
 
     public synchronized T getBack() {
         if (arrayList.isEmpty()) {
             return null;
         }
-        return arrayList.get(arrayList.size() - 1);
+        T t = arrayList.get(arrayList.size() - 1);
+        arrayList.remove(t);
+        return t;
     }
 
     public synchronized T get(int index) {
         if (arrayList.isEmpty()) {
             return null;
         }
-        return arrayList.get(index);
+        T t = arrayList.get(index);
+        arrayList.remove(t);
+        return t;
     }
 
     public synchronized void clear() {
