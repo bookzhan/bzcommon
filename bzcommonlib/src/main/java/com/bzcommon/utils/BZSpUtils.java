@@ -2,7 +2,6 @@ package com.bzcommon.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
 
 import java.util.Map;
 
@@ -17,7 +16,7 @@ public class BZSpUtils {
      */
     private static final String FILE_NAME = "bzmedia";
 
-    public static synchronized void init(@NonNull Context context) {
+    public static synchronized void init(Context context) {
         if (sharedPreferences == null) {
             sharedPreferences = context.getApplicationContext().getSharedPreferences(FILE_NAME,
                     Context.MODE_PRIVATE);
