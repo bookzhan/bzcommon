@@ -1,7 +1,7 @@
 package com.bzcommon;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.bzcommon.utils.BZAssetsFileManager;
@@ -18,6 +18,5 @@ public class MainActivity extends AppCompatActivity {
 
     public void start(View view) {
         BZAssetsFileManager.getFinalPath(this, "model/pd_2_00_pts5.dat");
-
     }
 }
