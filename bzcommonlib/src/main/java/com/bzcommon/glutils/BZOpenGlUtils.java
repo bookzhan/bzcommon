@@ -30,7 +30,24 @@ import android.util.Log;
 
 import com.bzcommon.utils.BZLogUtil;
 
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+
+import static android.opengl.GLES20.GL_CLAMP_TO_EDGE;
+import static android.opengl.GLES20.GL_LINEAR;
+import static android.opengl.GLES20.GL_RGBA;
+import static android.opengl.GLES20.GL_TEXTURE_2D;
+import static android.opengl.GLES20.GL_TEXTURE_MAG_FILTER;
+import static android.opengl.GLES20.GL_TEXTURE_MIN_FILTER;
+import static android.opengl.GLES20.GL_TEXTURE_WRAP_S;
+import static android.opengl.GLES20.GL_TEXTURE_WRAP_T;
+import static android.opengl.GLES20.GL_UNSIGNED_BYTE;
+import static android.opengl.GLES20.glBindTexture;
+import static android.opengl.GLES20.glDeleteTextures;
+import static android.opengl.GLES20.glGenTextures;
+import static android.opengl.GLES20.glIsTexture;
+import static android.opengl.GLES20.glTexImage2D;
+import static android.opengl.GLES20.glTexParameterf;
 
 public class BZOpenGlUtils {
     public static final int NO_TEXTURE = -1;
@@ -97,6 +114,32 @@ public class BZOpenGlUtils {
             textures[0] = usedTexId;
         }
         return textures[0];
+    }
+
+    public static int loadTexture(byte[] imageData, int width, int height) {
+        if (null == imageData || width <= 0 || height <= 0)
+            return 0;
+        int[] imageTextureId = new int[1];
+        glGenTextures(1, imageTextureId, 0);
+        glBindTexture(GL_TEXTURE_2D, imageTextureId[0]);
+        glTexParameterf(GL_TEXTURE_2D,
+                GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D,
+                GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D,
+                GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameterf(GL_TEXTURE_2D,
+                GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, ByteBuffer.wrap(imageData));
+        return imageTextureId[0];
+    }
+
+    public static void deleteTexture(int textureID) {
+        if (textureID >= 0 && glIsTexture(textureID)) {
+            int[] ints = new int[1];
+            ints[0] = textureID;
+            glDeleteTextures(1, ints, 0);
+        }
     }
 
     public static int loadTextureAsBitmap(final IntBuffer data, final Size size, final int usedTexId) {

@@ -473,6 +473,20 @@ public class BZBitmapUtil {
     }
 
     /**
+     * 缩放到指定的宽高
+     *
+     * @param targetWidth  期望的宽
+     * @param targetHeight 期望的高
+     */
+    public static Bitmap scaleBitmap4Fix(Bitmap srcBitmap, float targetWidth, float targetHeight) {
+        float scaleX = targetWidth / srcBitmap.getWidth();
+        float scaleY = targetHeight / srcBitmap.getHeight();
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleX, scaleY);
+        return Bitmap.createBitmap(srcBitmap, 0, 0, srcBitmap.getWidth(), srcBitmap.getHeight(), matrix, true);
+    }
+
+    /**
      * 旋转图片
      *
      * @param angle 旋转角度
