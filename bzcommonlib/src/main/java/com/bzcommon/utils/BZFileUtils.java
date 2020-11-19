@@ -164,7 +164,7 @@ public class BZFileUtils {
             f = new File(fn);
             size = f.length();
         } catch (Exception e) {
-            e.printStackTrace();
+            BZLogUtil.e(e);
         } finally {
             f = null;
         }
@@ -235,57 +235,78 @@ public class BZFileUtils {
      * @return if file not exist, return null, else return content of file
      * @throws RuntimeException if an error occurs while operator BufferedReader
      */
-    public static String readFile(File file, String charsetName) {
-        StringBuilder fileContent = new StringBuilder("");
-        if (file == null || !file.isFile()) {
+    public static String readTextFile(File file, String charsetName) {
+        StringBuilder fileContent = new StringBuilder();
+        if (file == null || !file.exists() || !file.isFile()) {
+            BZLogUtil.e("readTextFile file == null || !file.exists() || !file.isFile() path=" + (null == file ? null : file.getAbsolutePath()));
             return fileContent.toString();
         }
 
+        FileInputStream inputStream = null;
+        InputStreamReader is = null;
         BufferedReader reader = null;
         try {
-            InputStreamReader is = new InputStreamReader(new FileInputStream(file), charsetName);
+            inputStream = new FileInputStream(file);
+            is = new InputStreamReader(inputStream, charsetName);
             reader = new BufferedReader(is);
-            String line = null;
+            String line;
             while ((line = reader.readLine()) != null) {
                 if (!fileContent.toString().equals("")) {
                     fileContent.append("\r\n");
                 }
                 fileContent.append(line);
             }
-            reader.close();
-        } catch (IOException e) {
-            throw new RuntimeException("IOException occurred. ", e);
+            inputStream.close();
+            is.close();
+        } catch (Exception e) {
+            BZLogUtil.e(e.getMessage(), e);
         } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (Exception e) {
+                    BZLogUtil.e(e.getMessage(), e);
+                }
+            }
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (Exception e) {
+                    BZLogUtil.e(e.getMessage(), e);
+                }
+            }
             if (reader != null) {
                 try {
                     reader.close();
-                } catch (IOException e) {
-                    throw new RuntimeException("IOException occurred. ", e);
+                } catch (Exception e) {
+                    BZLogUtil.e(e.getMessage(), e);
                 }
             }
         }
         return fileContent.toString();
     }
 
-    public static String readFile(File file) {
-        return readFile(file, "utf-8");
+    public static String readTextFile(File file) {
+        return readTextFile(file, "utf-8");
     }
 
-    public static String readFile(String filePath) {
-        return readFile(new File(filePath));
+    public static String readTextFile(String filePath) {
+        return readTextFile(new File(filePath));
     }
 
     public static String readAssetsFile(Context context, String filePath) {
         if (null == context || null == filePath) {
             return null;
         }
+        String content = null;
         try {
             InputStream inputStream = context.getAssets().open(filePath);
-            return getString(inputStream);
+            content = getString(inputStream);
+            inputStream.close();
         } catch (IOException e1) {
-            e1.printStackTrace();
+            BZLogUtil.e(e1);
         }
-        return null;
+        return content;
     }
 
 
@@ -297,15 +318,15 @@ public class BZFileUtils {
             e1.printStackTrace();
         }
         BufferedReader reader = new BufferedReader(inputStreamReader);
-        StringBuffer sb = new StringBuffer("");
+        StringBuffer sb = new StringBuffer();
         String line;
         try {
             while ((line = reader.readLine()) != null) {
                 sb.append(line);
                 sb.append("\n");
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            BZLogUtil.e(e);
         }
         return sb.toString();
     }
@@ -335,7 +356,7 @@ public class BZFileUtils {
             out.flush();
             result = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            BZLogUtil.e(e);
         } finally {
             try {
                 if (in != null) {
@@ -368,7 +389,7 @@ public class BZFileUtils {
             out.flush();
             result = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            BZLogUtil.e(e);
         } finally {
             try {
                 if (in != null) {
@@ -416,13 +437,13 @@ public class BZFileUtils {
             writer.write(content);
             writer.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            BZLogUtil.e(e);
         } finally {
             if (null != writer) {
                 try {
                     writer.close();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    BZLogUtil.e(e);
                 }
             }
         }

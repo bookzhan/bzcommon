@@ -29,7 +29,7 @@ public class BZMD5Util {
             }
             return result.toString();
         } catch (Exception e) {
-            e.printStackTrace();
+             BZLogUtil.e(e);
         }
         return random.nextInt(100000) + "";
     }

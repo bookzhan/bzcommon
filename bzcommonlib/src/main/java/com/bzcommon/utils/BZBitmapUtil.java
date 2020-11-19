@@ -937,7 +937,7 @@ public class BZBitmapUtil {
                             break;
                     }
                 } catch (Throwable e) {
-                    e.printStackTrace();
+                     BZLogUtil.e(e);
                 }
                 Log.d(TAG, "Image rotation=" + rotation);
             } else {

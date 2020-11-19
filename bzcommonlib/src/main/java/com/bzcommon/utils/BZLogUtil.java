@@ -118,4 +118,10 @@ public class BZLogUtil {
             android.util.Log.e(TAG, msg, tr);
         }
     }
+
+    public static void e(Throwable tr) {
+        if (isShowLog) {
+            android.util.Log.e(TAG, tr.getMessage(), tr);
+        }
+    }
 }

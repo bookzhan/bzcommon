@@ -86,13 +86,13 @@ public class BZCPUTool {
         }
         if (!isArm) {
             try {
-                String strContent = BZFileUtils.readFile("/proc/cpuinfo");
+                String strContent = BZFileUtils.readTextFile("/proc/cpuinfo");
                 String lowerCaseContent = strContent.toLowerCase();
                 if (lowerCaseContent.contains("arm") || lowerCaseContent.contains("neon")) {
                     isArm = true;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                 BZLogUtil.e(e);
             }
         }
         return isArm;
