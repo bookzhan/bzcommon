@@ -17,8 +17,12 @@ public class BZSpUtils {
     private static final String FILE_NAME = "bzmedia";
 
     public static synchronized void init(Context context) {
+        init(context, FILE_NAME);
+    }
+
+    public static synchronized void init(Context context, String fileName) {
         if (sharedPreferences == null) {
-            sharedPreferences = context.getApplicationContext().getSharedPreferences(FILE_NAME,
+            sharedPreferences = context.getApplicationContext().getSharedPreferences(fileName,
                     Context.MODE_PRIVATE);
         }
     }
