@@ -255,6 +255,6 @@ public class BZDeviceUtils {
      * @return 是否支持硬解
      */
     public static boolean hardDecoderEnable() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && BZOpenGlUtils.detectOpenGLES30();
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && BZOpenGlUtils.detectOpenGLES30();
     }
 }
