@@ -83,6 +83,8 @@ public class BaseProgram {
     }
 
     protected void createProgram(int rotation, boolean flipHorizontal, boolean flipVertical) {
+        BZLogUtil.d(TAG, "createProgram");
+
         FloatBuffer pVertex = ByteBuffer.allocateDirect(VERTEX_SZ * FLOAT_SZ)
                 .order(ByteOrder.nativeOrder()).asFloatBuffer();
         pVertex.put(GLTexturesUtil.CUBE);
@@ -172,7 +174,6 @@ public class BaseProgram {
      */
     public void draw(final int tex_id) {
         if (!GLES20.glIsProgram(hProgram)) {
-            BZLogUtil.e(TAG, "Program is not enable create a new");
             release();
             createProgram(rotation, flipHorizontal, flipVertical);
         }
