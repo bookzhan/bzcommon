@@ -86,7 +86,7 @@ public class BaseProgram {
         createProgram(rotation, flipHorizontal, flipVertical);
     }
 
-    private void createProgram(int rotation, boolean flipHorizontal, boolean flipVertical) {
+    protected void createProgram(int rotation, boolean flipHorizontal, boolean flipVertical) {
         this.rotation = rotation;
         this.flipHorizontal = flipHorizontal;
         this.flipVertical = flipVertical;
