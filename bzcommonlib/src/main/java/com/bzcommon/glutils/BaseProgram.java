@@ -60,38 +60,30 @@ public class BaseProgram {
     private int maPositionLoc;
     private int maTextureCoordLoc;
     private FloatBuffer pTexCoord;
-    private FloatBuffer pVertex;
 
     private int[] coordinateBuffer = {-1};
     private int[] positionBuffer = {-1};
     private int rotation;
     private boolean flipHorizontal;
     private boolean flipVertical;
-    private static final float TEXCOORD_FLIP_VERTICAL[] = {
-            0.0f, 0.0f,
-            1.0f, 0.0f,
-            0.0f, 1.0f,
-            1.0f, 1.0f
-    };
+
 
     /**
      * Constructor
      * this should be called in GL context
      */
     public BaseProgram(boolean needFlipVertical) {
-        createProgram(0, false, needFlipVertical);
+        this(0, false, needFlipVertical);
     }
 
     public BaseProgram(int rotation, boolean flipHorizontal, boolean flipVertical) {
-        createProgram(rotation, flipHorizontal, flipVertical);
-    }
-
-    protected void createProgram(int rotation, boolean flipHorizontal, boolean flipVertical) {
         this.rotation = rotation;
         this.flipHorizontal = flipHorizontal;
         this.flipVertical = flipVertical;
+    }
 
-        pVertex = ByteBuffer.allocateDirect(VERTEX_SZ * FLOAT_SZ)
+    protected void createProgram(int rotation, boolean flipHorizontal, boolean flipVertical) {
+        FloatBuffer pVertex = ByteBuffer.allocateDirect(VERTEX_SZ * FLOAT_SZ)
                 .order(ByteOrder.nativeOrder()).asFloatBuffer();
         pVertex.put(GLTexturesUtil.CUBE);
         pVertex.position(0);
