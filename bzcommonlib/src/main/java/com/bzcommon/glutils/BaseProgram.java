@@ -52,12 +52,12 @@ public class BaseProgram {
             + "  gl_FragColor = texture2D(sTexture, vTextureCoord);\n"
             + "}";
 
-    protected int hProgram;
+    protected int hProgram = -1;
 
     private static final int FLOAT_SZ = Float.SIZE / 8;
     private static final int VERTEX_NUM = 4;
     private static final int VERTEX_SZ = VERTEX_NUM * 2;
-    private int maPositionLoc;
+    private int maPositionLoc = -1;
     private int maTextureCoordLoc;
     private FloatBuffer pTexCoord;
 
