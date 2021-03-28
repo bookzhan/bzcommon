@@ -54,15 +54,15 @@ public class BaseProgram {
 
     protected int hProgram = -1;
 
-    private static final int FLOAT_SZ = Float.SIZE / 8;
-    private static final int VERTEX_NUM = 4;
-    private static final int VERTEX_SZ = VERTEX_NUM * 2;
+    protected static final int FLOAT_SZ = Float.SIZE / 8;
+    protected static final int VERTEX_NUM = 4;
+    protected static final int VERTEX_SZ = VERTEX_NUM * 2;
     private int maPositionLoc = -1;
     private int maTextureCoordLoc;
     private FloatBuffer pTexCoord;
 
-    private int[] coordinateBuffer = {-1};
-    private int[] positionBuffer = {-1};
+    protected int[] coordinateBuffer = {-1};
+    protected int[] positionBuffer = {-1};
     private int rotation;
     private boolean flipHorizontal;
     private boolean flipVertical;

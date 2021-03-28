@@ -1,6 +1,7 @@
 package com.bzcommon;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -64,5 +65,9 @@ public class MainActivity extends AppCompatActivity {
             BZLogUtil.d(TAG, "Have all permissions");
             return true;
         }
+    }
+
+    public void GLImageActivity(View view) {
+        startActivity(new Intent(this,GLImageActivity.class));
     }
 }
