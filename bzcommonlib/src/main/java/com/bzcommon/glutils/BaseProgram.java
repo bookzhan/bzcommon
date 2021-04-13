@@ -124,11 +124,17 @@ public class BaseProgram {
     }
 
     public void setRotation(int rotation) {
+        if (this.rotation == rotation) {
+            return;
+        }
         this.rotation = rotation;
         updateTexCoord();
     }
 
     public void setFlip(boolean flipHorizontal, boolean flipVertical) {
+        if (this.flipHorizontal == flipHorizontal && this.flipVertical == flipVertical) {
+            return;
+        }
         this.flipHorizontal = flipHorizontal;
         this.flipVertical = flipVertical;
         updateTexCoord();
