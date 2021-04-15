@@ -29,5 +29,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.android.support.constraint:constraint-layout:2.0.4'
     implementation project(path: ':bzcommonlib')
+//    implementation 'io.github.bookzhan:bzcommon:1.1.14@aar'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 }
