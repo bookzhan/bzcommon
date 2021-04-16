@@ -44,11 +44,15 @@ File secretPropsFile = project.rootProject.file('local.properties')
 if (secretPropsFile.exists()) {
     Properties p = new Properties()
     p.load(new FileInputStream(secretPropsFile))
-    if(p.containsKey("signing.keyId")&&p.containsKey("signing.password")&&p.containsKey("signing.secretKeyRingFile")
-        &&p.containsKey("ossrhUsername")&&p.containsKey("ossrhPassword")){
+    if (p.containsKey("signing.keyId") && p.containsKey("signing.password") && p.containsKey("signing.secretKeyRingFile")
+            && p.containsKey("ossrhUsername") && p.containsKey("ossrhPassword")) {
         apply from: 'https://raw.githubusercontent.com/bookzhan/maven-publish-gradle/master/publish.gradle'
         println("Configuration information detected")
-    }else {
+        task uploadToMavenCentral(group: 'publishing') {
+            dependsOn(assemble)
+            dependsOn(publishReleasePublicationToMavencentralRepository)
+        }
+    } else {
         println("Please configure the signature and account information in the local.properties file")
     }
 }
