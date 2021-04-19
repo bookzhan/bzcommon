@@ -3,13 +3,11 @@ package com.bzcommon;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bzcommon.utils.BZAssetsFileManager;
-import com.bzcommon.utils.BZFileUtils;
+import com.bzcommon.utils.BZDeviceUtils;
 import com.bzcommon.utils.BZLogUtil;
 import com.bzcommon.utils.BZPermissionUtil;
 import com.bzcommon.utils.BZSpUtils;
@@ -30,14 +28,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void start(View view) {
-        String finalPath = BZAssetsFileManager.getFinalPath(this, "model/pd_2_00_pts5.dat");
-        BZLogUtil.d(TAG, finalPath);
-
-        String json = BZFileUtils.readTextFile(Environment.getExternalStorageDirectory().getAbsolutePath() + "/CameraCalibrationInfo/camera_calibration_info.json");
-        BZLogUtil.d(TAG, json);
-
-        String assetsFile = BZFileUtils.readAssetsFile(this, "test.txt");
-        BZLogUtil.d(TAG, assetsFile);
+//        String finalPath = BZAssetsFileManager.getFinalPath(this, "model/pd_2_00_pts5.dat");
+//        BZLogUtil.d(TAG, finalPath);
+//
+//        String json = BZFileUtils.readTextFile(Environment.getExternalStorageDirectory().getAbsolutePath() + "/CameraCalibrationInfo/camera_calibration_info.json");
+//        BZLogUtil.d(TAG, json);
+//
+//        String assetsFile = BZFileUtils.readAssetsFile(this, "test.txt");
+//        BZLogUtil.d(TAG, assetsFile);
+        boolean h265DecoderSupport = BZDeviceUtils.isH265DecoderSupport();
+        BZLogUtil.d(TAG, "h265DecoderSupport=" + h265DecoderSupport);
     }
 
     private boolean requestPermission() {
@@ -68,6 +68,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void GLImageActivity(View view) {
-        startActivity(new Intent(this,GLImageActivity.class));
+        startActivity(new Intent(this, GLImageActivity.class));
     }
 }

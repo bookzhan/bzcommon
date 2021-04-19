@@ -1,7 +1,6 @@
 package com.bzcommon.utils;
 
 import android.content.Context;
-import android.os.Environment;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -142,19 +141,6 @@ public class BZFileUtils {
         return false;
     }
 
-    /**
-     * 获取sdcard路径
-     */
-    public static String getExternalStorageDirectory() {
-        String path = Environment.getExternalStorageDirectory().getPath();
-        if (BZDeviceUtils.isZte()) {
-            //			if (!Environment.getExternalStoragePublicDirectory(
-            //					Environment.DIRECTORY_DCIM).exists()) {
-            path = path.replace("/sdcard", "/sdcard-ext");
-            //			}
-        }
-        return path;
-    }
 
     public static long getFileSize(String fn) {
         File f = null;
