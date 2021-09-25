@@ -1,4 +1,7 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
 android {
     compileSdkVersion 28
     buildToolsVersion "29.0.0"
@@ -26,34 +29,35 @@ android {
     }
 
 }
-ext {
-    publish_group_id = 'io.github.bookzhan'
-    publish_artifact_id = "bzcommon"
-    publish_version = '1.1.16'
-    publish_description = 'bzcommonlib'
 
-    developer_id = 'guaishou'
-    developer_name = 'bookzhan'
-    developer_email = 'bookzhan@qq.com'
+// 上传到私服
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            //正式环境
+            repository(url: properties.getProperty("POM_URL")) {
+                authentication(userName: properties.getProperty("nexus.user"), password: properties.getProperty("nexus.password"))
+            }
+            //snapshot环境
+            // snapshotRepository(url: properties.getProperty("POM_URL_snap")) {
+            //                authentication(userName: properties.getProperty("nexus.user"), //password: properties.getProperty("nexus.password"))
+            //  }
 
-    github_name = 'bookzhan'
-    github_project_name = 'bzcommon'
-    github_project_url = 'https://github.com/bookzhan/bzcommon'
-}
-File secretPropsFile = project.rootProject.file('local.properties')
-if (secretPropsFile.exists()) {
-    Properties p = new Properties()
-    p.load(new FileInputStream(secretPropsFile))
-    if (p.containsKey("signing.keyId") && p.containsKey("signing.password") && p.containsKey("signing.secretKeyRingFile")
-            && p.containsKey("ossrhUsername") && p.containsKey("ossrhPassword")) {
-        apply from: 'https://raw.githubusercontent.com/bookzhan/maven-publish-gradle/master/publish.gradle'
-        println("Configuration information detected")
-        task uploadToMavenCentral(group: 'publishing') {
-            dependsOn(assemble)
-            dependsOn(publishReleasePublicationToMavencentralRepository)
+            pom.groupId = properties.getProperty("POM_GROUP_ID")
+            pom.artifactId = properties.getProperty("POM_ATRIFACT_ID")
+            pom.version = properties.getProperty("POM_VERSION")
+
+            pom.project {
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+            }
         }
-    } else {
-        println("Please configure the signature and account information in the local.properties file")
     }
 }
 

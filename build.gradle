@@ -16,6 +16,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven { url "https://www.bzblog.online/nexus/repository/maven-releases/" }
     }
     tasks.withType(Javadoc) {
         options.addStringOption('Xdoclint:none', '-quiet')
