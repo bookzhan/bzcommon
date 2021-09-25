@@ -60,6 +60,13 @@ uploadArchives {
         }
     }
 }
+task androidSourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    from android.sourceSets.main.java.getSrcDirs()
+}
+artifacts {
+    archives androidSourcesJar
+}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
