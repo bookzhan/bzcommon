@@ -30,24 +30,46 @@ android {
 
 }
 
+ext {
+    NEXUS_USER = ''
+    NEXUS_PASSWORD = ''
+    RELEASE_SNAPSHOT = false
+
+    POM_URL_SNAP = 'https://www.bzblog.online/nexus/repository/maven-snapshots/'
+    POM_URL = 'https://www.bzblog.online/nexus/repository/maven-releases/'
+
+    POM_GROUP_ID = 'com.guaishou.bzlib'
+    POM_ATRIFACT_ID = 'bzcommon'
+    POM_VERSION = '1.1.16'
+}
+if (System.getenv('NEXUS_USER')) {
+    NEXUS_USER = System.getenv('NEXUS_USER')
+}
+if (System.getenv('NEXUS_PASSWORD')) {
+    NEXUS_PASSWORD = System.getenv('NEXUS_PASSWORD')
+}
+println("NEXUS_USER=" + NEXUS_USER + " NEXUS_PASSWORD=" + NEXUS_PASSWORD)
+
 // 上传到私服
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
 uploadArchives {
     repositories {
         mavenDeployer {
-            //正式环境
-            repository(url: properties.getProperty("POM_URL")) {
-                authentication(userName: properties.getProperty("nexus.user"), password: properties.getProperty("nexus.password"))
+            if (RELEASE_SNAPSHOT) {
+                //snapshot环境
+                snapshotRepository(url: POM_URL_SNAP) {
+                    authentication(userName: NEXUS_USER, password: NEXUS_PASSWORD)
+                }
+                POM_VERSION += "-SNAPSHOT"
+            } else {
+                //正式环境
+                repository(url: POM_URL) {
+                    authentication(userName: NEXUS_USER, password: NEXUS_PASSWORD)
+                }
             }
-            //snapshot环境
-            // snapshotRepository(url: properties.getProperty("POM_URL_snap")) {
-            //                authentication(userName: properties.getProperty("nexus.user"), //password: properties.getProperty("nexus.password"))
-            //  }
 
-            pom.groupId = properties.getProperty("POM_GROUP_ID")
-            pom.artifactId = properties.getProperty("POM_ATRIFACT_ID")
-            pom.version = properties.getProperty("POM_VERSION")
+            pom.groupId = POM_GROUP_ID
+            pom.artifactId = POM_ATRIFACT_ID
+            pom.version = POM_VERSION
 
             pom.project {
                 licenses {
