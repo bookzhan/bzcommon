@@ -50,18 +50,15 @@ if (System.getenv('NEXUS_PASSWORD')) {
 }
 println("NEXUS_USER=" + NEXUS_USER + " NEXUS_PASSWORD=" + NEXUS_PASSWORD)
 
-// 上传到私服
 uploadArchives {
     repositories {
         mavenDeployer {
             if (RELEASE_SNAPSHOT) {
-                //snapshot环境
                 snapshotRepository(url: POM_URL_SNAP) {
                     authentication(userName: NEXUS_USER, password: NEXUS_PASSWORD)
                 }
                 POM_VERSION += "-SNAPSHOT"
             } else {
-                //正式环境
                 repository(url: POM_URL) {
                     authentication(userName: NEXUS_USER, password: NEXUS_PASSWORD)
                 }
