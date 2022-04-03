@@ -44,7 +44,7 @@ public class ItemClickHelper extends RecyclerView.SimpleOnItemTouchListener {
     @Override
     public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
         mRv = rv;
-        return true;
+        return mGestureDetectorCompat.onTouchEvent(e);
     }
 
     @Override
