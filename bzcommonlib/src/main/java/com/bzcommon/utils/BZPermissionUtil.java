@@ -54,4 +54,20 @@ public class BZPermissionUtil {
         }
     }
 
+    /**
+     * 判断是否拥有全部权限
+     */
+    public static boolean isPermissionGranted(Context context, String[] permissions) {
+        if (null == context || null == permissions || permissions.length <= 0) {
+            return false;
+        }
+        boolean permissionGranted = true;
+        for (String permission : permissions) {
+            permissionGranted = ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
+            if (!permissionGranted) {
+                break;
+            }
+        }
+        return permissionGranted;
+    }
 }
