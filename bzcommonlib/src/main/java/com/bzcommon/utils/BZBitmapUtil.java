@@ -496,12 +496,8 @@ public class BZBitmapUtil {
     public static Bitmap rotateBitmap(Bitmap bitmap, float angle) {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
-        // 创建新的图片
-        Bitmap result = Bitmap.createBitmap(bitmap, 0, 0,
+        return Bitmap.createBitmap(bitmap, 0, 0,
                 bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-//        bitmap.recycle();
-
-        return result;
     }
 
     /**
@@ -840,7 +836,6 @@ public class BZBitmapUtil {
      * 防止加载本地图片OOM
      *
      * @param absolutePath 本地地址
-     * @return
      */
     public static Bitmap loadBitmap(Context context, String absolutePath) {
         Bitmap bm = null;
@@ -868,10 +863,41 @@ public class BZBitmapUtil {
             opt.inJustDecodeBounds = false;
             bm = BitmapFactory.decodeFile(absolutePath, opt);
         } catch (Exception e) {
-
             BZLogUtil.e(TAG, e);
         }
+        int pictureDegree = readPictureDegree(absolutePath);
+        if (null != bm && pictureDegree != 0) {
+            bm = rotateBitmap(bm, pictureDegree);
+        }
         return bm;
+    }
+
+    /**
+     * 读取图片属性：旋转的角度
+     *
+     * @param path 图片绝对路径
+     * @return degree旋转的角度
+     */
+    public static int readPictureDegree(String path) {
+        int degree = 0;
+        try {
+            ExifInterface exifInterface = new ExifInterface(path);
+            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    degree = 90;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    degree = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    degree = 270;
+                    break;
+            }
+        } catch (Throwable e) {
+            BZLogUtil.e(TAG, e);
+        }
+        return degree;
     }
 
     public static Bitmap drawableToBitmap(Drawable drawable) {
@@ -937,7 +963,7 @@ public class BZBitmapUtil {
                             break;
                     }
                 } catch (Throwable e) {
-                     BZLogUtil.e(e);
+                    BZLogUtil.e(e);
                 }
                 Log.d(TAG, "Image rotation=" + rotation);
             } else {
