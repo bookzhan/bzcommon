@@ -1,6 +1,7 @@
 package com.bzcommon.utils;
 
 import android.content.Context;
+import android.net.Uri;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -360,7 +361,11 @@ public class BZFileUtils {
         return result;
     }
 
+
     public static boolean fileCopy(InputStream in, String to) {
+        if (null == in || null == to) {
+            return false;
+        }
         boolean result = false;
 
         int size = 1 * 1024;
@@ -382,12 +387,14 @@ public class BZFileUtils {
                     in.close();
                 }
             } catch (IOException e) {
+                BZLogUtil.e(e);
             }
             try {
                 if (out != null) {
                     out.close();
                 }
             } catch (IOException e) {
+                BZLogUtil.e(e);
             }
         }
         return result;

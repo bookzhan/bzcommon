@@ -1,16 +1,12 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "29.0.0"
+    compileSdkVersion 33
 
     defaultConfig {
         minSdkVersion 18
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion 33
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -27,20 +23,24 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    namespace 'com.luoye.bzcommonlib'
 }
 
 ext {
     NEXUS_USER = ''
     NEXUS_PASSWORD = ''
-    RELEASE_SNAPSHOT = false
+    RELEASE_SNAPSHOT = true
 
     POM_URL_SNAP = 'https://www.raoyunsoft.com/nexus/repository/maven-snapshots/'
     POM_URL = 'https://www.raoyunsoft.com/nexus/repository/maven-releases/'
 
     POM_GROUP_ID = 'com.guaishou.bzlib'
     POM_ATRIFACT_ID = 'bzcommon'
-    POM_VERSION = '1.1.20'
+    POM_VERSION = '1.1.21'
 }
 if (System.getenv('NEXUS_USER')) {
     NEXUS_USER = System.getenv('NEXUS_USER')
@@ -50,30 +50,23 @@ if (System.getenv('NEXUS_PASSWORD')) {
 }
 println("NEXUS_USER=" + NEXUS_USER + " NEXUS_PASSWORD=" + NEXUS_PASSWORD)
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            if (RELEASE_SNAPSHOT) {
-                snapshotRepository(url: POM_URL_SNAP) {
-                    authentication(userName: NEXUS_USER, password: NEXUS_PASSWORD)
-                }
-                POM_VERSION += "-SNAPSHOT"
-            } else {
-                repository(url: POM_URL) {
-                    authentication(userName: NEXUS_USER, password: NEXUS_PASSWORD)
-                }
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = POM_GROUP_ID
+                artifactId = POM_ATRIFACT_ID
+                artifact androidSourcesJar
+                version = RELEASE_SNAPSHOT ? POM_VERSION + "-SNAPSHOT" : POM_VERSION
             }
-
-            pom.groupId = POM_GROUP_ID
-            pom.artifactId = POM_ATRIFACT_ID
-            pom.version = POM_VERSION
-
-            pom.project {
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
+        }
+        repositories {
+            maven {
+                url RELEASE_SNAPSHOT ? POM_URL_SNAP : POM_URL
+                credentials {
+                    username NEXUS_USER
+                    password NEXUS_PASSWORD
                 }
             }
         }
@@ -83,12 +76,8 @@ task androidSourcesJar(type: Jar) {
     archiveClassifier.set('sources')
     from android.sourceSets.main.java.getSrcDirs()
 }
-artifacts {
-    archives androidSourcesJar
-}
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
 }
