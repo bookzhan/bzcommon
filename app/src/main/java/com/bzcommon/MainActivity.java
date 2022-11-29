@@ -1,20 +1,16 @@
 package com.bzcommon;
 
-import android.Manifest;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bzcommon.utils.BZBitmapUtil;
 import com.bzcommon.utils.BZLogUtil;
-import com.bzcommon.utils.BZPermissionUtil;
 import com.bzcommon.utils.BZSpUtils;
-
-import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -26,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         BZSpUtils.init(getApplicationContext());
-        requestPermission();
+//        BZPermissionUtil.requestCommonPermission(this);
     }
 
     public void start(View view) {
@@ -40,8 +36,8 @@ public class MainActivity extends AppCompatActivity {
 //        BZLogUtil.d(TAG, assetsFile);
 //        boolean h265DecoderSupport = BZDeviceUtils.isH265DecoderSupport();
 //        BZLogUtil.d(TAG, "h265DecoderSupport=" + h265DecoderSupport);
-        Bitmap bitmap = BZBitmapUtil.loadBitmap(this, Environment.getExternalStorageDirectory().getAbsolutePath() + "/bzmedia/test_11.jpg");
-        BZLogUtil.d(TAG, "bitmap=" + bitmap);
+//        Bitmap bitmap = BZBitmapUtil.loadBitmap(this, Environment.getExternalStorageDirectory().getAbsolutePath() + "/bzmedia/test_11.jpg");
+//        BZLogUtil.d(TAG, "bitmap=" + bitmap);
 
 //        try {
 //            ExifInterface exifInterface = new ExifInterface(Environment.getExternalStorageDirectory().getAbsolutePath() + "/bzmedia/test_11.jpg");
@@ -50,34 +46,9 @@ public class MainActivity extends AppCompatActivity {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-
-    }
-
-    private boolean requestPermission() {
-        ArrayList<String> permissionList = new ArrayList<>();
-        if (!BZPermissionUtil.isPermissionGranted(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            permissionList.add(Manifest.permission.READ_EXTERNAL_STORAGE);
-        }
-        if (!BZPermissionUtil.isPermissionGranted(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
-        if (!BZPermissionUtil.isPermissionGranted(this, Manifest.permission.CAMERA)) {
-            permissionList.add(Manifest.permission.CAMERA);
-        }
-        if (!BZPermissionUtil.isPermissionGranted(this, Manifest.permission.RECORD_AUDIO)) {
-            permissionList.add(Manifest.permission.RECORD_AUDIO);
-        }
-
-        String[] permissionStrings = new String[permissionList.size()];
-        permissionList.toArray(permissionStrings);
-
-        if (permissionList.size() > 0) {
-            BZPermissionUtil.requestPermission(this, permissionStrings, BZPermissionUtil.CODE_REQ_PERMISSION);
-            return false;
-        } else {
-            BZLogUtil.d(TAG, "Have all permissions");
-            return true;
-        }
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test_11);
+        String path = BZBitmapUtil.saveBitmapToExternalStorage(this, bitmap);
+        BZLogUtil.d(TAG, "path=" + path);
     }
 
     public void GLImageActivity(View view) {

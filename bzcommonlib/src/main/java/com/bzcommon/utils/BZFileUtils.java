@@ -1,7 +1,6 @@
 package com.bzcommon.utils;
 
 import android.content.Context;
-import android.net.Uri;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,14 +11,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.FileNameMap;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class BZFileUtils {
+    private final static String TAG = BZLogUtil.TAG_PREFIX + BZFileUtils.class.getSimpleName();
 
     /**
      * 计算文件的md5值
@@ -123,21 +123,17 @@ public class BZFileUtils {
     /**
      * 检测文件是否可用
      */
-    public static boolean checkFile(File f) {
-        if (f != null && f.exists() && f.canRead() && (f.isDirectory() || (f.isFile() && f.length() > 0))) {
-            return true;
-        }
-        return false;
+    public static boolean fileIsEnable(File f) {
+        return f != null && f.exists() && f.canRead() && (f.isDirectory() || (f.isFile() && f.length() > 0));
     }
 
     /**
      * 检测文件是否可用
      */
-    public static boolean checkFile(String path) {
+    public static boolean fileIsEnable(String path) {
         if (BZStringUtils.isNotEmpty(path)) {
             File f = new File(path);
-            if (f.exists() && f.canRead() && (f.isDirectory() || (f.isFile() && f.length() > 0)))
-                return true;
+            return f.exists() && f.canRead() && (f.isDirectory() || (f.isFile() && f.length() > 0));
         }
         return false;
     }
@@ -299,13 +295,9 @@ public class BZFileUtils {
 
     public static String getString(InputStream inputStream) {
         InputStreamReader inputStreamReader = null;
-        try {
-            inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
-        } catch (UnsupportedEncodingException e1) {
-            e1.printStackTrace();
-        }
+        inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         BufferedReader reader = new BufferedReader(inputStreamReader);
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         String line;
         try {
             while ((line = reader.readLine()) != null) {
@@ -320,15 +312,11 @@ public class BZFileUtils {
 
     /**
      * 文件拷贝
-     *
-     * @param from
-     * @param to
-     * @return
      */
     public static boolean fileCopy(String from, String to) {
         boolean result = false;
 
-        int size = 1 * 1024;
+        int size = 1024;
 
         FileInputStream in = null;
         FileOutputStream out = null;
@@ -349,13 +337,13 @@ public class BZFileUtils {
                 if (in != null) {
                     in.close();
                 }
-            } catch (IOException e) {
+            } catch (IOException ignore) {
             }
             try {
                 if (out != null) {
                     out.close();
                 }
-            } catch (IOException e) {
+            } catch (IOException ignore) {
             }
         }
         return result;
@@ -368,7 +356,7 @@ public class BZFileUtils {
         }
         boolean result = false;
 
-        int size = 1 * 1024;
+        int size = 1024;
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(to);
@@ -383,9 +371,7 @@ public class BZFileUtils {
             BZLogUtil.e(e);
         } finally {
             try {
-                if (in != null) {
-                    in.close();
-                }
+                in.close();
             } catch (IOException e) {
                 BZLogUtil.e(e);
             }
@@ -402,6 +388,9 @@ public class BZFileUtils {
 
     public static File createNewFile(String fileWithPath) {
         File file = new File(fileWithPath);
+        if (null == file.getParentFile()) {
+            return null;
+        }
         return createNewFile(file.getParentFile().getPath() + "/", getFileName(fileWithPath));
     }
 
@@ -409,18 +398,31 @@ public class BZFileUtils {
         if (BZStringUtils.isEmpty(filePath)) {
             return filePath;
         } else {
-            int filePosi = filePath.lastIndexOf(File.separator);
-            return filePosi == -1 ? filePath : filePath.substring(filePosi + 1);
+            int filePosition = filePath.lastIndexOf(File.separator);
+            return filePosition == -1 ? filePath : filePath.substring(filePosition + 1);
         }
     }
 
     public static File createNewFile(String fileSavePath, String fileName) {
         File fileDir = new File(fileSavePath);
         if (!fileDir.exists()) {
-            fileDir.mkdirs();
+            boolean mkdirs = fileDir.mkdirs();
+            BZLogUtil.d(TAG, "createNewFile mkdirs=" + mkdirs);
         }
 
         return new File(fileDir, fileName);
+    }
+
+    public static void ensureParentPathExist(String path) {
+        File fileDir = new File(path);
+        File parentFile = fileDir.getParentFile();
+        if (null == parentFile) {
+            return;
+        }
+        if (!parentFile.exists()) {
+            boolean mkdirs = parentFile.mkdirs();
+            BZLogUtil.d(TAG, "ensureParentPathExist mkdirs=" + mkdirs);
+        }
     }
 
     public static void saveFile(String path, String content) {

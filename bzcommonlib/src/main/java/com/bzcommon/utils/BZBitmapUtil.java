@@ -1,5 +1,8 @@
 package com.bzcommon.utils;
 
+import android.Manifest;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -16,24 +19,29 @@ import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
-import android.os.Build.VERSION;
-import android.renderscript.Allocation;
-import android.renderscript.Element;
-import android.renderscript.RenderScript;
-import android.renderscript.ScriptIntrinsicBlur;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.WindowManager;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * 图片处理的工具类，主要针对bitmap进行处理
@@ -42,254 +50,6 @@ public class BZBitmapUtil {
 
     private static final String TAG = "Blur";
 
-    /**
-     * 模糊
-     *
-     * @param radius 模糊半径
-     * @author Medivh
-     * @date 2014-7-17 上午9:39:51
-     */
-    public static Bitmap fastblur(Context context, Bitmap sentBitmap, int radius) {
-
-        if (VERSION.SDK_INT > 16) {
-            Bitmap bitmap = sentBitmap.copy(sentBitmap.getConfig(), true);
-
-            final RenderScript rs = RenderScript.create(context);
-            final Allocation input = Allocation.createFromBitmap(rs, sentBitmap, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
-            final Allocation output = Allocation.createTyped(rs, input.getType());
-            final ScriptIntrinsicBlur script = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
-
-            script.setRadius(radius /* e.g. 3.f */);
-            script.setInput(input);
-            script.forEach(output);
-            output.copyTo(bitmap);
-            return bitmap;
-        }
-
-        Bitmap bitmap = sentBitmap.copy(Config.ARGB_8888, true);
-
-        if (radius < 1) {
-            return (null);
-        }
-
-        int w = bitmap.getWidth();
-        int h = bitmap.getHeight();
-
-        int[] pix = new int[w * h];
-        bitmap.getPixels(pix, 0, w, 0, 0, w, h);
-
-        int wm = w - 1;
-        int hm = h - 1;
-        int wh = w * h;
-        int div = radius + radius + 1;
-
-        int r[] = new int[wh];
-        int g[] = new int[wh];
-        int b[] = new int[wh];
-        int rsum, gsum, bsum, x, y, i, p, yp, yi, yw;
-        int vmin[] = new int[Math.max(w, h)];
-
-        int divsum = (div + 1) >> 1;
-        divsum *= divsum;
-        int dv[] = new int[256 * divsum];
-        for (i = 0; i < 256 * divsum; i++) {
-            dv[i] = (i / divsum);
-        }
-
-        yw = yi = 0;
-
-        int[][] stack = new int[div][3];
-        int stackpointer;
-        int stackstart;
-        int[] sir;
-        int rbs;
-        int r1 = radius + 1;
-        int routsum, goutsum, boutsum;
-        int rinsum, ginsum, binsum;
-
-        for (y = 0; y < h; y++) {
-            rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;
-            for (i = -radius; i <= radius; i++) {
-                p = pix[yi + Math.min(wm, Math.max(i, 0))];
-                sir = stack[i + radius];
-                sir[0] = (p & 0xff0000) >> 16;
-                sir[1] = (p & 0x00ff00) >> 8;
-                sir[2] = (p & 0x0000ff);
-                rbs = r1 - Math.abs(i);
-                rsum += sir[0] * rbs;
-                gsum += sir[1] * rbs;
-                bsum += sir[2] * rbs;
-                if (i > 0) {
-                    rinsum += sir[0];
-                    ginsum += sir[1];
-                    binsum += sir[2];
-                } else {
-                    routsum += sir[0];
-                    goutsum += sir[1];
-                    boutsum += sir[2];
-                }
-            }
-            stackpointer = radius;
-
-            for (x = 0; x < w; x++) {
-
-                r[yi] = dv[rsum];
-                g[yi] = dv[gsum];
-                b[yi] = dv[bsum];
-
-                rsum -= routsum;
-                gsum -= goutsum;
-                bsum -= boutsum;
-
-                stackstart = stackpointer - radius + div;
-                sir = stack[stackstart % div];
-
-                routsum -= sir[0];
-                goutsum -= sir[1];
-                boutsum -= sir[2];
-
-                if (y == 0) {
-                    vmin[x] = Math.min(x + radius + 1, wm);
-                }
-                p = pix[yw + vmin[x]];
-
-                sir[0] = (p & 0xff0000) >> 16;
-                sir[1] = (p & 0x00ff00) >> 8;
-                sir[2] = (p & 0x0000ff);
-
-                rinsum += sir[0];
-                ginsum += sir[1];
-                binsum += sir[2];
-
-                rsum += rinsum;
-                gsum += ginsum;
-                bsum += binsum;
-
-                stackpointer = (stackpointer + 1) % div;
-                sir = stack[(stackpointer) % div];
-
-                routsum += sir[0];
-                goutsum += sir[1];
-                boutsum += sir[2];
-
-                rinsum -= sir[0];
-                ginsum -= sir[1];
-                binsum -= sir[2];
-
-                yi++;
-            }
-            yw += w;
-        }
-        for (x = 0; x < w; x++) {
-            rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;
-            yp = -radius * w;
-            for (i = -radius; i <= radius; i++) {
-                yi = Math.max(0, yp) + x;
-
-                sir = stack[i + radius];
-
-                sir[0] = r[yi];
-                sir[1] = g[yi];
-                sir[2] = b[yi];
-
-                rbs = r1 - Math.abs(i);
-
-                rsum += r[yi] * rbs;
-                gsum += g[yi] * rbs;
-                bsum += b[yi] * rbs;
-
-                if (i > 0) {
-                    rinsum += sir[0];
-                    ginsum += sir[1];
-                    binsum += sir[2];
-                } else {
-                    routsum += sir[0];
-                    goutsum += sir[1];
-                    boutsum += sir[2];
-                }
-
-                if (i < hm) {
-                    yp += w;
-                }
-            }
-            yi = x;
-            stackpointer = radius;
-            for (y = 0; y < h; y++) {
-                // Preserve alpha channel: ( 0xff000000 & pix[yi] )
-                pix[yi] = (0xff000000 & pix[yi]) | (dv[rsum] << 16) | (dv[gsum] << 8) | dv[bsum];
-
-                rsum -= routsum;
-                gsum -= goutsum;
-                bsum -= boutsum;
-
-                stackstart = stackpointer - radius + div;
-                sir = stack[stackstart % div];
-
-                routsum -= sir[0];
-                goutsum -= sir[1];
-                boutsum -= sir[2];
-
-                if (x == 0) {
-                    vmin[y] = Math.min(y + r1, hm) * w;
-                }
-                p = x + vmin[y];
-
-                sir[0] = r[p];
-                sir[1] = g[p];
-                sir[2] = b[p];
-
-                rinsum += sir[0];
-                ginsum += sir[1];
-                binsum += sir[2];
-
-                rsum += rinsum;
-                gsum += ginsum;
-                bsum += binsum;
-
-                stackpointer = (stackpointer + 1) % div;
-                sir = stack[stackpointer];
-
-                routsum += sir[0];
-                goutsum += sir[1];
-                boutsum += sir[2];
-
-                rinsum -= sir[0];
-                ginsum -= sir[1];
-                binsum -= sir[2];
-
-                yi += w;
-            }
-        }
-
-        bitmap.setPixels(pix, 0, w, 0, 0, w, h);
-        return (bitmap);
-    }
-
-    /**
-     * 模糊
-     *
-     * @param blurValue 模糊半径
-     * @author Medivh
-     * @date 2014-7-17 上午9:39:51
-     */
-    public static Bitmap bluredBitmap(Context context, Bitmap srcBitmap, int blurValue) {
-
-        return BZBitmapUtil.fastblur(context, srcBitmap, blurValue);
-    }
-
-    /**
-     * 模糊
-     *
-     * @param blurValue     模糊半径
-     * @param contrastValue 对比度
-     * @author Medivh
-     * @date 2014-7-17 上午9:39:51
-     */
-    public static Bitmap bluredBitmap(Context context, Bitmap srcBitmap, int blurValue, int contrastValue) {
-        Bitmap dstBitmap = setContrast(srcBitmap, contrastValue);
-        dstBitmap = BZBitmapUtil.fastblur(context, dstBitmap, blurValue);
-        return dstBitmap;
-    }
 
     /**
      * 对比度
@@ -708,7 +468,6 @@ public class BZBitmapUtil {
             bufferOutStream.close();
             return true;
         } catch (Exception e) {
-
             BZLogUtil.e(TAG, e);
         }
         return false;
@@ -727,7 +486,6 @@ public class BZBitmapUtil {
             bufferOutStream.flush();
             bufferOutStream.close();
         } catch (Exception e) {
-
             BZLogUtil.e(TAG, e);
         }
     }
@@ -1010,5 +768,78 @@ public class BZBitmapUtil {
             Log.d(TAG, "getTexture fileName=" + fileName);
         }
         return targetBitmap;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    public static String saveBitmapByMediaStore(Context context, Bitmap bitmap, String name) {
+        ContentResolver contentResolver = context.getContentResolver();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.Images.ImageColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES);
+        contentValues.put(MediaStore.Images.ImageColumns.DISPLAY_NAME, name);
+        contentValues.put(MediaStore.Images.ImageColumns.MIME_TYPE, "image/jpeg");
+        contentValues.put(MediaStore.Images.ImageColumns.WIDTH, bitmap.getWidth());
+        contentValues.put(MediaStore.Images.ImageColumns.HEIGHT, bitmap.getHeight());
+        Uri uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+        if (uri == null) {
+            return null;
+        }
+        //写入图片
+        OutputStream out = null;
+        try {
+            out = contentResolver.openOutputStream(uri);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.flush();
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_PICTURES + "/" + name;
+    }
+
+    private static boolean saveBitmap(Bitmap bitmap, String path) {
+        try {
+            BZFileUtils.ensureParentPathExist(path);
+            FileOutputStream fileOut = new FileOutputStream(path);
+            BufferedOutputStream bufferOutStream = new BufferedOutputStream(fileOut);
+            bitmap.compress(CompressFormat.JPEG, 100, bufferOutStream);
+            bufferOutStream.flush();
+            bufferOutStream.close();
+            return true;
+        } catch (Exception e) {
+            BZLogUtil.e(TAG, e);
+        }
+        return false;
+    }
+
+    /**
+     * 新老版本均兼容
+     *
+     * @return file path
+     */
+    public static String saveBitmapToExternalStorage(Context context, Bitmap bitmap) {
+        if (null == context || null == bitmap || bitmap.isRecycled()) {
+            return null;
+        }
+        String name = "IMG_" + System.currentTimeMillis() + ".jpg";
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            if (!BZPermissionUtil.isPermissionGranted(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                BZPermissionUtil.requestFileReadWritePermission((AppCompatActivity) context);
+                return null;
+            }
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_PICTURES + "/" + name;
+            if (saveBitmap(bitmap, path)) {
+                return path;
+            }
+        } else {
+            return saveBitmapByMediaStore(context, bitmap, name);
+        }
+        return null;
     }
 }

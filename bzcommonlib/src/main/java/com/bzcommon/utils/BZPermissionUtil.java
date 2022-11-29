@@ -1,11 +1,18 @@
 package com.bzcommon.utils;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.Settings;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import java.util.ArrayList;
 
 
 /**
@@ -20,26 +27,39 @@ public class BZPermissionUtil {
 
     /**
      * 权限请求
-     *
-     * @param activity
-     * @return
      */
     public static void requestPermission(AppCompatActivity activity, String[] permissionArr, int requestCode) {
         if (permissionArr != null) {
             ActivityCompat.requestPermissions(activity, permissionArr, requestCode);
         }
-
     }
 
-    public static void requestPermission(AppCompatActivity activity, String permissionArr, int requestCode) {
-        if (permissionArr != null) {
-            ActivityCompat.requestPermissions(activity, new String[]{permissionArr}, requestCode);
+    public static void requestPermission(AppCompatActivity activity, String permission, int requestCode) {
+        if (permission != null) {
+            ActivityCompat.requestPermissions(activity, new String[]{permission}, requestCode);
         }
     }
 
-    public static void requestPermissionIFNot(AppCompatActivity activity, String permissionArr, int requestCode) {
-        if (permissionArr != null && !isPermissionGranted(activity, permissionArr)) {
-            requestPermission(activity, permissionArr, requestCode);
+    public static void requestPermissionIfNot(AppCompatActivity activity, String[] permissionArr, int requestCode) {
+        if (null == activity || null == permissionArr || permissionArr.length <= 0) {
+            return;
+        }
+        ArrayList<String> arrayList = new ArrayList<>();
+        for (String permission : permissionArr) {
+            if (!isPermissionGranted(activity, permission)) {
+                arrayList.add(permission);
+            }
+        }
+        if (!arrayList.isEmpty()) {
+            String[] strings = new String[arrayList.size()];
+            arrayList.toArray(strings);
+            requestPermission(activity, strings, requestCode);
+        }
+    }
+
+    public static void requestPermissionIfNot(AppCompatActivity activity, String permission, int requestCode) {
+        if (permission != null && !isPermissionGranted(activity, permission)) {
+            requestPermission(activity, permission, requestCode);
         }
     }
 
@@ -47,11 +67,7 @@ public class BZPermissionUtil {
      * 判断是否拥有该权限
      */
     public static boolean isPermissionGranted(Context context, String permission) {
-        if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            return false;
-        }
+        return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     /**
@@ -69,5 +85,68 @@ public class BZPermissionUtil {
             }
         }
         return permissionGranted;
+    }
+
+    public static void requestFileReadPermission(AppCompatActivity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                activity.startActivityForResult(intent, CODE_REQ_PERMISSION);
+            }
+        } else {
+            BZPermissionUtil.requestPermissionIfNot(
+                    activity,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    CODE_REQ_PERMISSION
+            );
+        }
+    }
+
+    public static void requestFileReadWritePermission(AppCompatActivity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                activity.startActivityForResult(intent, CODE_REQ_PERMISSION);
+            }
+        } else {
+            BZPermissionUtil.requestPermissionIfNot(
+                    activity,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    CODE_REQ_PERMISSION
+            );
+        }
+    }
+
+    public static void requestCommonPermission(AppCompatActivity activity) {
+        if (null == activity) {
+            return;
+        }
+        ArrayList<String> permissionList = new ArrayList<>();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                activity.startActivityForResult(intent, CODE_REQ_PERMISSION);
+            }
+        } else {
+            if (!BZPermissionUtil.isPermissionGranted(activity, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                permissionList.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+            if (!BZPermissionUtil.isPermissionGranted(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+        }
+        if (!BZPermissionUtil.isPermissionGranted(activity, Manifest.permission.CAMERA)) {
+            permissionList.add(Manifest.permission.CAMERA);
+        }
+        if (!BZPermissionUtil.isPermissionGranted(activity, Manifest.permission.RECORD_AUDIO)) {
+            permissionList.add(Manifest.permission.RECORD_AUDIO);
+        }
+        String[] permissionStrings = new String[permissionList.size()];
+        permissionList.toArray(permissionStrings);
+        if (permissionList.size() > 0) {
+            BZPermissionUtil.requestPermission(activity, permissionStrings, BZPermissionUtil.CODE_REQ_PERMISSION);
+        } else {
+            BZLogUtil.d(TAG, "Have all permissions");
+        }
     }
 }

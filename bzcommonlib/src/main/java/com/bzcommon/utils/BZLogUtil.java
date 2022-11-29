@@ -1,8 +1,8 @@
 package com.bzcommon.utils;
 
 public class BZLogUtil {
+    public final static String TAG_PREFIX = "bz_";
     private static boolean isShowLog = true;
-    private static final String TAG = "bz_";
 
     public static void setShowLog(boolean isLog) {
         BZLogUtil.isShowLog = isLog;
@@ -20,7 +20,7 @@ public class BZLogUtil {
 
     public static void v(String msg) {
         if (isShowLog) {
-            android.util.Log.v(TAG, msg);
+            android.util.Log.v(TAG_PREFIX, msg);
         }
 
     }
@@ -33,7 +33,7 @@ public class BZLogUtil {
 
     public static void d(String msg) {
         if (isShowLog) {
-            android.util.Log.d(TAG, msg);
+            android.util.Log.d(TAG_PREFIX, msg);
         }
 
     }
@@ -46,7 +46,7 @@ public class BZLogUtil {
 
     public static void w(String msg) {
         if (isShowLog) {
-            android.util.Log.w(TAG, msg);
+            android.util.Log.w(TAG_PREFIX, msg);
         }
 
     }
@@ -97,7 +97,7 @@ public class BZLogUtil {
 
     public static void e(String msg) {
         if (isShowLog) {
-            android.util.Log.e(TAG, msg);
+            android.util.Log.e(TAG_PREFIX, msg);
         }
     }
 
@@ -115,13 +115,13 @@ public class BZLogUtil {
 
     public static void e(String msg, Throwable tr) {
         if (isShowLog) {
-            android.util.Log.e(TAG, msg, tr);
+            android.util.Log.e(TAG_PREFIX, msg, tr);
         }
     }
 
     public static void e(Throwable tr) {
         if (isShowLog) {
-            android.util.Log.e(TAG, tr.getMessage(), tr);
+            android.util.Log.e(TAG_PREFIX, tr.getMessage(), tr);
         }
     }
 }

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -26,7 +27,7 @@ public class BZStringUtils {
     private static final double KB = 1024.0;
     private static final double MB = 1048576.0;
     private static final double GB = 1073741824.0;
-    public static final SimpleDateFormat DATE_FORMAT_PART = new SimpleDateFormat("HH:mm");
+    public static final SimpleDateFormat DATE_FORMAT_PART = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
     public static String currentTimeString() {
         return DATE_FORMAT_PART.format(Calendar.getInstance().getTime());
@@ -51,25 +52,20 @@ public class BZStringUtils {
 
     /**
      * 格式化日期字符串
-     *
-     * @param date
-     * @param pattern
-     * @return
      */
     public static String formatDate(Date date, String pattern) {
-        SimpleDateFormat format = new SimpleDateFormat(pattern);
+        SimpleDateFormat format = new SimpleDateFormat(pattern, Locale.getDefault());
         return format.format(date);
     }
 
     public static String formatDate(long date, String pattern) {
-        SimpleDateFormat format = new SimpleDateFormat(pattern);
+        SimpleDateFormat format = new SimpleDateFormat(pattern, Locale.getDefault());
         return format.format(new Date(date));
     }
 
     /**
      * 格式化日期字符串
      *
-     * @param date
      * @return 例如2011-3-24
      */
     public static String formatDate(Date date) {
@@ -82,8 +78,6 @@ public class BZStringUtils {
 
     /**
      * 获取当前时间 格式为yyyy-MM-dd 例如2011-07-08
-     *
-     * @return
      */
     public static String getDate() {
         return formatDate(new Date(), DEFAULT_DATE_PATTERN);
@@ -94,14 +88,12 @@ public class BZStringUtils {
      */
     public static String createFileName() {
         Date date = new Date(System.currentTimeMillis());
-        SimpleDateFormat format = new SimpleDateFormat(DEFAULT_FILE_PATTERN);
+        SimpleDateFormat format = new SimpleDateFormat(DEFAULT_FILE_PATTERN, Locale.getDefault());
         return format.format(date);
     }
 
     /**
      * 获取当前时间
-     *
-     * @return
      */
     public static String getDateTime() {
         return formatDate(new Date(), DEFAULT_DATETIME_PATTERN);
@@ -110,7 +102,6 @@ public class BZStringUtils {
     /**
      * 格式化日期时间字符串
      *
-     * @param date
      * @return 例如2011-11-30 16:06:54
      */
     public static String formatDateTime(Date date) {
@@ -123,9 +114,6 @@ public class BZStringUtils {
 
     /**
      * 格林威时间转换
-     *
-     * @param gmt
-     * @return
      */
     public static String formatGMTDate(String gmt) {
         TimeZone timeZoneLondon = TimeZone.getTimeZone(gmt);
@@ -135,14 +123,10 @@ public class BZStringUtils {
 
     /**
      * 拼接数组
-     *
-     * @param array
-     * @param separator
-     * @return
      */
     public static String join(final ArrayList<String> array,
                               final String separator) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         if (array != null && array.size() > 0) {
             for (String str : array) {
                 result.append(str);
@@ -155,7 +139,7 @@ public class BZStringUtils {
 
     public static String join(final Iterator<String> iter,
                               final String separator) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         if (iter != null) {
             while (iter.hasNext()) {
                 String key = iter.next();
@@ -173,17 +157,13 @@ public class BZStringUtils {
      * 严格判断是否是null
      */
     public static boolean isEmpty(String value) {
-        return value == null || "".equalsIgnoreCase(value.trim()) || "null".equalsIgnoreCase(value.trim());
+        return TextUtils.isEmpty(value) || "null".equalsIgnoreCase(value.trim());
     }
 
     public static boolean isNotEmpty(String str) {
         return !isEmpty(str);
     }
 
-    /**
-     * @param str
-     * @return
-     */
     public static String trim(String str) {
         return str == null ? EMPTY : str.trim();
     }
@@ -192,7 +172,6 @@ public class BZStringUtils {
      * 转换时间显示
      *
      * @param time 毫秒
-     * @return
      */
     public static String generateTime(long time) {
         int totalSeconds = (int) (time / 1000);
@@ -200,8 +179,8 @@ public class BZStringUtils {
         int minutes = (totalSeconds / 60) % 60;
         int hours = totalSeconds / 3600;
 
-        return hours > 0 ? String.format("%02d:%02d:%02d", hours, minutes,
-                seconds) : String.format("%02d:%02d", minutes, seconds);
+        return hours > 0 ? String.format(Locale.ENGLISH, "%02d:%02d:%02d", hours, minutes,
+                seconds) : String.format(Locale.ENGLISH, "%02d:%02d", minutes, seconds);
     }
 
     public static boolean isBlank(String s) {
@@ -211,28 +190,25 @@ public class BZStringUtils {
     /**
      * 根据秒速获取时间格式
      */
-    public static String gennerTime(int totalSeconds) {
+    public static String generateTime(int totalSeconds) {
         int seconds = totalSeconds % 60;
         int minutes = (totalSeconds / 60) % 60;
-        return String.format("%02d:%02d", minutes, seconds);
+        return String.format(Locale.ENGLISH, "%02d:%02d", minutes, seconds);
     }
 
     /**
      * 转换文件大小
-     *
-     * @param size
-     * @return
      */
     public static String generateFileSize(long size) {
         String fileSize;
         if (size < KB)
             fileSize = size + "B";
         else if (size < MB)
-            fileSize = String.format("%.1f", size / KB) + "KB";
+            fileSize = String.format(Locale.ENGLISH, "%.1f", size / KB) + "KB";
         else if (size < GB)
-            fileSize = String.format("%.1f", size / MB) + "MB";
+            fileSize = String.format(Locale.ENGLISH, "%.1f", size / MB) + "MB";
         else
-            fileSize = String.format("%.1f", size / GB) + "GB";
+            fileSize = String.format(Locale.ENGLISH, "%.1f", size / GB) + "GB";
 
         return fileSize;
     }
@@ -255,11 +231,9 @@ public class BZStringUtils {
     /**
      * 截取字符串
      *
-     * @param search       待搜索的字符串
-     * @param start        起始字符串 例如：<title>
-     * @param end          结束字符串 例如：</title>
-     * @param defaultValue
-     * @return
+     * @param search 待搜索的字符串
+     * @param start  起始字符串 例如：<title>
+     * @param end    结束字符串 例如：</title>
      */
     public static String substring(String search, String start, String end,
                                    String defaultValue) {
@@ -282,7 +256,6 @@ public class BZStringUtils {
      * @param search 待搜索的字符串
      * @param start  起始字符串 例如：<title>
      * @param end    结束字符串 例如：</title>
-     * @return
      */
     public static String substring(String search, String start, String end) {
         return substring(search, start, end, "");
@@ -290,12 +263,9 @@ public class BZStringUtils {
 
     /**
      * 拼接字符串
-     *
-     * @param strs
-     * @return
      */
     public static String concat(String... strs) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         if (strs != null) {
             for (String str : strs) {
                 if (str != null)
@@ -308,7 +278,7 @@ public class BZStringUtils {
     /**
      * Helper function for making null strings safe for comparisons, etc.
      *
-     * @return (s == null) ? "" : s;
+     * @return (s = = null) ? "" : s;
      */
     public static String makeSafe(String s) {
         return (s == null) ? "" : s;
