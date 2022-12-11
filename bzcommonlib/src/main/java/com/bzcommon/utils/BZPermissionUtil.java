@@ -40,9 +40,12 @@ public class BZPermissionUtil {
         }
     }
 
-    public static void requestPermissionIfNot(AppCompatActivity activity, String[] permissionArr, int requestCode) {
+    /**
+     * @return false has no permission, true has all permissions
+     */
+    public static boolean requestPermissionIfNot(AppCompatActivity activity, String[] permissionArr, int requestCode) {
         if (null == activity || null == permissionArr || permissionArr.length <= 0) {
-            return;
+            return false;
         }
         ArrayList<String> arrayList = new ArrayList<>();
         for (String permission : permissionArr) {
@@ -54,13 +57,17 @@ public class BZPermissionUtil {
             String[] strings = new String[arrayList.size()];
             arrayList.toArray(strings);
             requestPermission(activity, strings, requestCode);
+            return false;
         }
+        return true;
     }
 
-    public static void requestPermissionIfNot(AppCompatActivity activity, String permission, int requestCode) {
+    public static boolean requestPermissionIfNot(AppCompatActivity activity, String permission, int requestCode) {
         if (permission != null && !isPermissionGranted(activity, permission)) {
             requestPermission(activity, permission, requestCode);
+            return false;
         }
+        return true;
     }
 
     /**
@@ -87,14 +94,19 @@ public class BZPermissionUtil {
         return permissionGranted;
     }
 
-    public static void requestFileReadPermission(AppCompatActivity activity) {
+    /**
+     * @return false has no permission, true has all permissions
+     */
+    public static boolean requestFileReadPermission(AppCompatActivity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (!Environment.isExternalStorageManager()) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
                 activity.startActivityForResult(intent, CODE_REQ_PERMISSION);
+                return false;
             }
+            return true;
         } else {
-            BZPermissionUtil.requestPermissionIfNot(
+            return BZPermissionUtil.requestPermissionIfNot(
                     activity,
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                     CODE_REQ_PERMISSION
@@ -102,14 +114,19 @@ public class BZPermissionUtil {
         }
     }
 
-    public static void requestFileReadWritePermission(AppCompatActivity activity) {
+    /**
+     * @return false has no permission, true has all permissions
+     */
+    public static boolean requestFileReadWritePermission(AppCompatActivity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (!Environment.isExternalStorageManager()) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
                 activity.startActivityForResult(intent, CODE_REQ_PERMISSION);
+                return false;
             }
+            return true;
         } else {
-            BZPermissionUtil.requestPermissionIfNot(
+            return BZPermissionUtil.requestPermissionIfNot(
                     activity,
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     CODE_REQ_PERMISSION
@@ -117,9 +134,9 @@ public class BZPermissionUtil {
         }
     }
 
-    public static void requestCommonPermission(AppCompatActivity activity) {
+    public static boolean requestCommonPermission(AppCompatActivity activity) {
         if (null == activity) {
-            return;
+            return false;
         }
         ArrayList<String> permissionList = new ArrayList<>();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -145,8 +162,10 @@ public class BZPermissionUtil {
         permissionList.toArray(permissionStrings);
         if (permissionList.size() > 0) {
             BZPermissionUtil.requestPermission(activity, permissionStrings, BZPermissionUtil.CODE_REQ_PERMISSION);
+            return false;
         } else {
             BZLogUtil.d(TAG, "Have all permissions");
         }
+        return true;
     }
 }

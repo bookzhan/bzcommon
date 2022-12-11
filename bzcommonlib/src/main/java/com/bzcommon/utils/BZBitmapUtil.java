@@ -1,6 +1,5 @@
 package com.bzcommon.utils;
 
-import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -829,8 +828,7 @@ public class BZBitmapUtil {
         }
         String name = "IMG_" + System.currentTimeMillis() + ".jpg";
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            if (!BZPermissionUtil.isPermissionGranted(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                BZPermissionUtil.requestFileReadWritePermission((AppCompatActivity) context);
+            if (!BZPermissionUtil.requestFileReadWritePermission((AppCompatActivity) context)) {
                 return null;
             }
             String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_PICTURES + "/" + name;
