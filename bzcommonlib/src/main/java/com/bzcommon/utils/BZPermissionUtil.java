@@ -139,10 +139,12 @@ public class BZPermissionUtil {
             return false;
         }
         ArrayList<String> permissionList = new ArrayList<>();
+        boolean isExternalStorageManager = true;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (!Environment.isExternalStorageManager()) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
                 activity.startActivityForResult(intent, CODE_REQ_PERMISSION);
+                isExternalStorageManager = false;
             }
         } else {
             if (!BZPermissionUtil.isPermissionGranted(activity, Manifest.permission.READ_EXTERNAL_STORAGE)) {
@@ -166,6 +168,6 @@ public class BZPermissionUtil {
         } else {
             BZLogUtil.d(TAG, "Have all permissions");
         }
-        return true;
+        return isExternalStorageManager;
     }
 }
