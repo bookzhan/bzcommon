@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Point;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
 import android.os.Build;
-import android.view.Display;
 import android.view.WindowManager;
 
 import com.bzcommon.glutils.BZOpenGlUtils;
@@ -16,6 +16,8 @@ import com.bzcommon.glutils.BZOpenGlUtils;
  * 系统版本信息类
  */
 public class BZDeviceUtils {
+
+    private static Point mScreenSize = null;
 
     /**
      * 获得设备的固件版本号
@@ -74,16 +76,28 @@ public class BZDeviceUtils {
     /**
      * 获取屏幕宽度
      */
-    @SuppressWarnings("deprecation")
     public static int getScreenWidth(Context context) {
-        Display display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        return display.getWidth();
+        if (null == context) {
+            return -1;
+        }
+        return getScreenRect(context).x;
     }
 
-    @SuppressWarnings("deprecation")
+    private static Point getScreenRect(Context context) {
+        if (null == mScreenSize) {
+            mScreenSize = new Point();
+        }
+        if (mScreenSize.x <= 0 || mScreenSize.y <= 0) {
+            ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRealSize(mScreenSize);
+        }
+        return mScreenSize;
+    }
+
     public static int getScreenHeight(Context context) {
-        Display display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        return display.getHeight();
+        if (null == context) {
+            return -1;
+        }
+        return getScreenRect(context).y;
     }
 
     /**

@@ -1,14 +1,12 @@
 package com.bzcommon;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bzcommon.utils.BZBitmapUtil;
+import com.bzcommon.utils.BZDeviceUtils;
 import com.bzcommon.utils.BZLogUtil;
 import com.bzcommon.utils.BZSpUtils;
 
@@ -46,9 +44,11 @@ public class MainActivity extends AppCompatActivity {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test_11);
-        String path = BZBitmapUtil.saveBitmapToExternalStorage(this, bitmap);
-        BZLogUtil.d(TAG, "path=" + path);
+//        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test_11);
+//        String path = BZBitmapUtil.saveBitmapToExternalStorage(this, bitmap);
+
+        BZLogUtil.d(TAG, "ScreenWidth=" + BZDeviceUtils.getScreenWidth(this));
+        BZLogUtil.d(TAG, "ScreenHeight=" + BZDeviceUtils.getScreenHeight(this));
     }
 
     public void GLImageActivity(View view) {
