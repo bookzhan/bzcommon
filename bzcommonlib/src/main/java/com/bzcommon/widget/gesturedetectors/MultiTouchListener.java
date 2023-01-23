@@ -1,5 +1,6 @@
 package com.bzcommon.widget.gesturedetectors;
 
+import android.annotation.SuppressLint;
 import android.graphics.Matrix;
 import android.view.MotionEvent;
 import android.view.View;
@@ -85,13 +86,14 @@ public class MultiTouchListener implements OnTouchListener {
         view.setTranslationY(view.getTranslationY() - offsetY);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View view, MotionEvent event) {
         mScaleGestureDetector.onTouchEvent(view, event);
-        if (null != onTouchListener) {
-            onTouchListener.onTouch(view, event);
-        }
         if (!isTranslateEnabled) {
+            if (null != onTouchListener) {
+                onTouchListener.onTouch(view, event);
+            }
             return true;
         }
 
@@ -147,7 +149,9 @@ public class MultiTouchListener implements OnTouchListener {
                 break;
             }
         }
-
+        if (null != onTouchListener) {
+            onTouchListener.onTouch(view, event);
+        }
         return true;
     }
 
@@ -221,8 +225,6 @@ public class MultiTouchListener implements OnTouchListener {
     public interface OnActionListener {
         void onMove(Matrix matrix);
 
-        default void onScale(float scale) {
-
-        }
+        void onScale(float scale);
     }
 }
