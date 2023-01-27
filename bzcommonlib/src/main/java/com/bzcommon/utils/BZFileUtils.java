@@ -17,6 +17,7 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 public class BZFileUtils {
     private final static String TAG = BZLogUtil.TAG_PREFIX + BZFileUtils.class.getSimpleName();
@@ -177,6 +178,15 @@ public class BZFileUtils {
             }
         }
         return extension.toLowerCase();
+    }
+
+    public static void deleteFiles(List<String> filePathList) {
+        if (null == filePathList || filePathList.isEmpty()) {
+            return;
+        }
+        for (String path : filePathList) {
+            deleteFile(path);
+        }
     }
 
     public static boolean deleteFile(File f) {

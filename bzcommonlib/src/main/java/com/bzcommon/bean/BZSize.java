@@ -4,11 +4,11 @@ package com.bzcommon.bean;
  * Created by bookzhan on 2023−01-23 16:55.
  * description:
  */
-public class BZRect {
+public class BZSize {
     private int mWidth;
     private int mHeight;
 
-    public BZRect(int width, int height) {
+    public BZSize(int width, int height) {
         mWidth = width;
         mHeight = height;
     }
