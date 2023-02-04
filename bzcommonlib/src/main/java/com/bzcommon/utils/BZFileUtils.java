@@ -20,7 +20,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public class BZFileUtils {
-    private final static String TAG = BZLogUtil.TAG_PREFIX + BZFileUtils.class.getSimpleName();
+    private final static String TAG = BZFileUtils.class.getSimpleName();
 
     /**
      * 计算文件的md5值
