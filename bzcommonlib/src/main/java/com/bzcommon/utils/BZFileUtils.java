@@ -3,6 +3,7 @@ package com.bzcommon.utils;
 import android.content.Context;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -15,6 +16,8 @@ import java.math.BigInteger;
 import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -324,76 +327,60 @@ public class BZFileUtils {
      * 文件拷贝
      */
     public static boolean fileCopy(String from, String to) {
-        boolean result = false;
-
-        int size = 1024;
-
-        FileInputStream in = null;
-        FileOutputStream out = null;
         try {
-            in = new FileInputStream(from);
-            out = new FileOutputStream(to);
-            byte[] buffer = new byte[size];
-            int bytesRead = -1;
-            while ((bytesRead = in.read(buffer)) != -1) {
-                out.write(buffer, 0, bytesRead);
-            }
-            out.flush();
-            result = true;
-        } catch (Exception e) {
+            return fileCopy(Files.newInputStream(Paths.get(from)), new FileOutputStream(to));
+        } catch (Throwable e) {
             BZLogUtil.e(e);
-        } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException ignore) {
-            }
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException ignore) {
-            }
         }
-        return result;
+        return false;
     }
-
 
     public static boolean fileCopy(InputStream in, String to) {
         if (null == in || null == to) {
             return false;
         }
-        boolean result = false;
-
-        int size = 1024;
-        FileOutputStream out = null;
         try {
-            out = new FileOutputStream(to);
+            return fileCopy(in, new FileOutputStream(to));
+        } catch (Throwable e) {
+            BZLogUtil.e(e);
+        }
+        return false;
+    }
+
+    public static boolean fileCopy(InputStream in, FileOutputStream out) {
+        if (null == in || null == out) {
+            closeStream(in);
+            closeStream(out);
+            return false;
+        }
+        boolean result = false;
+        try {
+            int size = 4 * 1024;
             byte[] buffer = new byte[size];
-            int bytesRead = -1;
-            while ((bytesRead = in.read(buffer)) != -1) {
+            int bytesRead;
+            while ((bytesRead = in.read(buffer)) > 0) {
                 out.write(buffer, 0, bytesRead);
             }
             out.flush();
             result = true;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             BZLogUtil.e(e);
         } finally {
-            try {
-                in.close();
-            } catch (IOException e) {
-                BZLogUtil.e(e);
-            }
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException e) {
-                BZLogUtil.e(e);
-            }
+            closeStream(in);
+            closeStream(out);
         }
         return result;
+    }
+
+    public static void closeStream(Closeable stream) {
+        if (null == stream) {
+            return;
+        }
+        try {
+            stream.close();
+        } catch (Throwable e) {
+            BZLogUtil.e(e);
+        }
     }
 
     public static File createNewFile(String fileWithPath) {
