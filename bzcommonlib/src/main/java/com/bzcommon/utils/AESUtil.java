@@ -1,22 +1,22 @@
 package com.bzcommon.utils;
 
-import java.io.UnsupportedEncodingException;
+import android.annotation.SuppressLint;
+import android.util.Base64;
+
+import java.nio.charset.StandardCharsets;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
 public class AESUtil {
-
-    /* 算法/模式/填充 */
-    private static final String CipherMode = "AES/ECB/PKCS5Padding";
+    private static final String AES_MODE = "AES/ECB/PKCS5Padding";
 
     /* 创建密钥 */
-    private static SecretKeySpec createKey(String password) {
-        byte[] data = null;
+    public static SecretKeySpec createKey(String password) {
         if (password == null) {
             password = "";
         }
-        StringBuffer sb = new StringBuffer(32);
+        StringBuilder sb = new StringBuilder(32);
         sb.append(password);
         while (sb.length() < 32) {
             sb.append("0");
@@ -24,99 +24,57 @@ public class AESUtil {
         if (sb.length() > 32) {
             sb.setLength(32);
         }
-        try {
-            data = sb.toString().getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-             BZLogUtil.e(e);
-        }
+        byte[] data = sb.toString().getBytes(StandardCharsets.UTF_8);
         return new SecretKeySpec(data, "AES");
     }
 
-    /* 加密字节数据 */
-    public static byte[] encrypt(byte[] content, String password) {
+    private static byte[] encrypt(byte[] data, String password) {
         try {
-            SecretKeySpec key = createKey(password);
-            Cipher cipher = Cipher.getInstance(CipherMode);
-            cipher.init(Cipher.ENCRYPT_MODE, key);
-            return cipher.doFinal(content);
-        } catch (Exception e) {
-             BZLogUtil.e(e);
+            @SuppressLint("GetInstance")
+            Cipher cipher = Cipher.getInstance(AES_MODE);
+            cipher.init(Cipher.ENCRYPT_MODE, createKey(password));
+            return cipher.doFinal(data);
+        } catch (Throwable throwable) {
+            BZLogUtil.e(throwable);
         }
         return null;
     }
 
-    /*加密(结果为16进制字符串) */
+    private static byte[] decrypt(byte[] data, String password) {
+        try {
+            @SuppressLint("GetInstance")
+            Cipher cipher = Cipher.getInstance(AES_MODE);
+            cipher.init(Cipher.DECRYPT_MODE, createKey(password));
+            return cipher.doFinal(data);
+        } catch (Throwable throwable) {
+            BZLogUtil.e(throwable);
+        }
+        return null;
+    }
+
     public static String encrypt(String content, String password) {
-        byte[] data = null;
-        try {
-            data = content.getBytes("UTF-8");
-        } catch (Exception e) {
-             BZLogUtil.e(e);
+        if (null == content || null == password) {
+            BZLogUtil.e("encrypt null==plainText||null==password");
+            return "";
         }
-        data = encrypt(data, password);
-        return byte2hex(data);
+        byte[] data = content.getBytes(StandardCharsets.UTF_8);
+        byte[] encrypted = encrypt(data, password);
+        if (null == encrypted) {
+            return "";
+        }
+        return Base64.encodeToString(encrypted, Base64.DEFAULT);
     }
 
-    /*解密字节数组*/
-    public static byte[] decrypt(byte[] content, String password) {
-        try {
-            SecretKeySpec key = createKey(password);
-            Cipher cipher = Cipher.getInstance(CipherMode);
-            cipher.init(Cipher.DECRYPT_MODE, key);
-            return cipher.doFinal(content);
-        } catch (Exception e) {
-             BZLogUtil.e(e);
-        }
-        return null;
-    }
-
-    /*解密16进制的字符串为字符串 */
     public static String decrypt(String content, String password) {
-        byte[] data = null;
-        try {
-            data = hex2byte(content);
-        } catch (Exception e) {
-             BZLogUtil.e(e);
+        if (null == content || null == password) {
+            BZLogUtil.e("encrypt null==plainText||null==password");
+            return "";
         }
-        data = decrypt(data, password);
-        if (data == null) return null;
-        String result = null;
-        try {
-            result = new String(data, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-             BZLogUtil.e(e);
+        byte[] data = Base64.decode(content, Base64.DEFAULT);
+        byte[] decrypted = decrypt(data, password);
+        if (null == decrypted) {
+            return "";
         }
-        return result;
-    }
-
-    /*字节数组转成16进制字符串 */
-    public static String byte2hex(byte[] b) {
-        // 一个字节的数，
-        StringBuffer sb = new StringBuffer(b.length * 2);
-        String tmp = "";
-        for (int n = 0; n < b.length; n++) {
-            // 整数转成十六进制表示
-            tmp = (java.lang.Integer.toHexString(b[n] & 0XFF));
-            if (tmp.length() == 1) {
-                sb.append("0");
-            }
-            sb.append(tmp);
-        }
-        return sb.toString().toUpperCase(); // 转成大写
-    }
-
-    /*将hex字符串转换成字节数组 */
-    private static byte[] hex2byte(String inputString) {
-        if (inputString == null || inputString.length() < 2) {
-            return new byte[0];
-        }
-        inputString = inputString.toLowerCase();
-        int l = inputString.length() / 2;
-        byte[] result = new byte[l];
-        for (int i = 0; i < l; ++i) {
-            String tmp = inputString.substring(2 * i, 2 * i + 2);
-            result[i] = (byte) (Integer.parseInt(tmp, 16) & 0xFF);
-        }
-        return result;
+        return new String(decrypted, StandardCharsets.UTF_8);
     }
 }

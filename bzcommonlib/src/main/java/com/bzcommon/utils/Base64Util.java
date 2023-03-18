@@ -1,6 +1,8 @@
 package com.bzcommon.utils;
 import android.util.Base64;
 
+import java.nio.charset.StandardCharsets;
+
 public class Base64Util {
 
     /**
@@ -10,7 +12,7 @@ public class Base64Util {
      */
     public static String encodeWord(String message) {
         try {
-            return Base64.encodeToString(message.getBytes("utf-8"), Base64.NO_WRAP);
+            return Base64.encodeToString(message.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP);
         } catch (Exception e) {
             BZLogUtil.e(e);
         }
@@ -23,7 +25,7 @@ public class Base64Util {
      */
     public static String decodeWord(String encodeWord) {
         try {
-            return new String(Base64.decode(encodeWord, Base64.NO_WRAP), "utf-8");
+            return new String(Base64.decode(encodeWord, Base64.NO_WRAP), StandardCharsets.UTF_8);
         } catch (Exception e) {
             BZLogUtil.e(e);
         }
