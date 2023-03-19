@@ -9,7 +9,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
 public class AESUtil {
-    private static final String AES_MODE = "AES/ECB/PKCS5Padding";
+    private static final String AES_MODE = "AES/ECB/PKCS7Padding";
 
     /* 创建密钥 */
     public static SecretKeySpec createKey(String password) {
