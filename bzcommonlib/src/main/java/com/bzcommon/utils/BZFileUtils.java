@@ -16,8 +16,6 @@ import java.math.BigInteger;
 import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -299,7 +297,7 @@ public class BZFileUtils {
             InputStream inputStream = context.getAssets().open(filePath);
             content = getString(inputStream);
             inputStream.close();
-        } catch (IOException e1) {
+        } catch (Throwable e1) {
             BZLogUtil.e(e1);
         }
         return content;
@@ -307,8 +305,7 @@ public class BZFileUtils {
 
 
     public static String getString(InputStream inputStream) {
-        InputStreamReader inputStreamReader = null;
-        inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         BufferedReader reader = new BufferedReader(inputStreamReader);
         StringBuilder sb = new StringBuilder();
         String line;
@@ -317,6 +314,9 @@ public class BZFileUtils {
                 sb.append(line);
                 sb.append("\n");
             }
+            sb.delete(sb.lastIndexOf("\n"), sb.length());
+            inputStreamReader.close();
+            reader.close();
         } catch (Exception e) {
             BZLogUtil.e(e);
         }
@@ -328,7 +328,10 @@ public class BZFileUtils {
      */
     public static boolean fileCopy(String from, String to) {
         try {
-            return fileCopy(Files.newInputStream(Paths.get(from)), new FileOutputStream(to));
+            FileInputStream fileInputStream = new FileInputStream(from);
+            boolean fileCopy = fileCopy(fileInputStream, new FileOutputStream(to));
+            fileInputStream.close();
+            return fileCopy;
         } catch (Throwable e) {
             BZLogUtil.e(e);
         }

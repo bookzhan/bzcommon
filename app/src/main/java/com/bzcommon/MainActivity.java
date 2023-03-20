@@ -6,7 +6,7 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bzcommon.utils.AESUtil;
+import com.bzcommon.utils.BZFileUtils;
 import com.bzcommon.utils.BZLogUtil;
 import com.bzcommon.utils.BZSpUtils;
 
@@ -29,10 +29,8 @@ public class MainActivity extends AppCompatActivity {
 //
 //        String finalPath2 = BZAssetsFileManager.getFinalPath(this, "lookup.png");
 //        BZLogUtil.d(TAG, finalPath2);
-        String encrypt = AESUtil.encrypt("Hello World!", "179cc14b51a22c64c81cdcc319f34e8a");
-        BZLogUtil.d(TAG, "encrypt="+encrypt);
-        String decrypt = AESUtil.decrypt(encrypt, "179cc14b51a22c64c81cdcc319f34e8a");
-        BZLogUtil.d(TAG, "decrypt="+decrypt);
+        String readAssetsFile = BZFileUtils.readAssetsFile(this, "test.txt");
+        BZLogUtil.d(TAG, "readAssetsFile="+readAssetsFile);
     }
 
     public void GLImageActivity(View view) {
