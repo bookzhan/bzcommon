@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
-import android.util.Base64;
 
 /**
  * Created by bookzhan on 2023−01-25 17:49.
@@ -24,9 +23,7 @@ public class BZCommonUtil {
             @SuppressLint("PackageManagerGetSignatures")
             PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_SIGNATURES);
             Signature[] signatures = packageInfo.signatures;
-            byte[] signatureBytes = signatures[0].toByteArray();
-            String encodeToString = Base64.encodeToString(signatureBytes, Base64.DEFAULT);
-            return BZMD5Util.md5(encodeToString);
+            return BZMD5Util.md5(signatures[0].toCharsString());
         } catch (Exception e) {
             BZLogUtil.e(e);
         }
