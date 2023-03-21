@@ -12,6 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.math.BigInteger;
 import java.net.FileNameMap;
 import java.net.URLConnection;
@@ -305,18 +306,18 @@ public class BZFileUtils {
 
 
     public static String getString(InputStream inputStream) {
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-        BufferedReader reader = new BufferedReader(inputStreamReader);
         StringBuilder sb = new StringBuilder();
-        String line;
         try {
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
-                sb.append("\n");
+            Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            BufferedReader bufferedReader = new BufferedReader(reader);
+
+            char[] buffer = new char[2048];
+            int length;
+            while ((length = bufferedReader.read(buffer)) > 0) {
+                sb.append(new String(buffer, 0, length));
             }
-            sb.delete(sb.lastIndexOf("\n"), sb.length());
-            inputStreamReader.close();
             reader.close();
+            bufferedReader.close();
         } catch (Exception e) {
             BZLogUtil.e(e);
         }
