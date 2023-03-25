@@ -8,6 +8,22 @@
     <com.bzcommon.MoveScaleRotateView
         android:layout_width="300px"
         android:layout_height="300px"
-        android:background="@color/red_bg" />
+        android:background="@color/red_bg">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/test_11" />
+    </com.bzcommon.MoveScaleRotateView>
+
+
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/test_11"
+        android:visibility="gone" />
 
 </FrameLayout>

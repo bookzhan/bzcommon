@@ -3,9 +3,9 @@ package com.bzcommon;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
+import android.widget.FrameLayout;
 
-public class MoveScaleRotateView extends View {
+public class MoveScaleRotateView extends FrameLayout {
     // 属性变量
     private float translationX; // 移动X
     private float translationY; // 移动Y
@@ -71,11 +71,15 @@ public class MoveScaleRotateView extends View {
                         rotation = rotation + 360;
                     }
                     setRotation(rotation);
+                    actionX = event.getRawX();
+                    actionY = event.getRawY();
                 }
                 break;
             case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_POINTER_UP:
                 moveType = 0;
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+                moveType = 1;
         }
         return super.onTouchEvent(event);
     }

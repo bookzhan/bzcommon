@@ -45,8 +45,8 @@ public class MultiTouchListener implements OnTouchListener {
         view.setScaleX(scale);
         view.setScaleY(scale);
 
-        float rotation = adjustAngle(view.getRotation() + info.deltaAngle);
-        view.setRotation(rotation);
+//        float rotation = adjustAngle(view.getRotation() + info.deltaAngle);
+//        view.setRotation(rotation);
 
         if (null != onActionListener) {
             onActionListener.onMove(view.getMatrix());
@@ -135,16 +135,16 @@ public class MultiTouchListener implements OnTouchListener {
 
             case MotionEvent.ACTION_POINTER_UP: {
                 // Extract the index of the pointer that left the touch sensor.
-                int pointerIndex = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
-                int pointerId = event.getPointerId(pointerIndex);
-                if (pointerId == mActivePointerId) {
-                    // This was our active pointer going up. Choose a new
-                    // active pointer and adjust accordingly.
-                    int newPointerIndex = pointerIndex == 0 ? 1 : 0;
-                    mPrevX = event.getX(newPointerIndex);
-                    mPrevY = event.getY(newPointerIndex);
-                    mActivePointerId = event.getPointerId(newPointerIndex);
-                }
+//                int pointerIndex = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+//                int pointerId = event.getPointerId(pointerIndex);
+//                if (pointerId == mActivePointerId) {
+//                    // This was our active pointer going up. Choose a new
+//                    // active pointer and adjust accordingly.
+//                    int newPointerIndex = pointerIndex == 0 ? 1 : 0;
+//                    mPrevX = event.getX(newPointerIndex);
+//                    mPrevY = event.getY(newPointerIndex);
+//                    mActivePointerId = event.getPointerId(newPointerIndex);
+//                }
 
                 break;
             }
