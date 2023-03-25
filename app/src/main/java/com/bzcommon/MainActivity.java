@@ -36,4 +36,8 @@ public class MainActivity extends AppCompatActivity {
     public void GLImageActivity(View view) {
         startActivity(new Intent(this, GLImageActivity.class));
     }
+
+    public void ViewDemoActivity(View view) {
+        startActivity(new Intent(this, ViewDemoActivity.class));
+    }
 }

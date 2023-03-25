@@ -20,6 +20,15 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:onClick="start"
-        android:text="start" />
+        android:text="start"
+        android:textAllCaps="false" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:onClick="ViewDemoActivity"
+        android:text="ViewDemoActivity"
+        android:textAllCaps="false" />
 
 </LinearLayout>
