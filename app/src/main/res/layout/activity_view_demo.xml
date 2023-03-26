@@ -5,45 +5,9 @@
     android:layout_height="match_parent"
     tools:context=".ViewDemoActivity">
 
-    <com.bzcommon.MoveScaleRotateView
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:background="@color/red_bg"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/test_11" />
-    </com.bzcommon.MoveScaleRotateView>
-
-
-    <ImageView
-        android:id="@+id/image_view"
+    <com.bzcommon.MyView
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/test_11"
-        android:visibility="visible" />
-
-    <com.bzcommon.MultiTouchView
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:background="@color/red_bg"
-        android:visibility="gone" />
-
-    <com.bzcommon.GestureView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:visibility="gone"
-        android:background="@color/red_bg">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/test_11" />
-    </com.bzcommon.GestureView>
+        android:background="@color/red_bg" />
 
 </FrameLayout>

@@ -1,11 +1,8 @@
 package com.bzcommon;
 
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.bzcommon.widget.gesturedetectors.ViewGestureHelper;
 
 public class ViewDemoActivity extends AppCompatActivity {
 
@@ -13,12 +10,12 @@ public class ViewDemoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_demo);
-        View image_view = findViewById(R.id.image_view);
+//        View image_view = findViewById(R.id.image_view);
 //        MultiTouchListener multiTouchListener = new MultiTouchListener();
 //        multiTouchListener.isRotateEnabled = false;
 //        multiTouchListener.minimumScale = 0.5f;
 //        multiTouchListener.maximumScale = 100f;
 //        image_view.setOnTouchListener(multiTouchListener);
-        image_view.setOnTouchListener(new ViewGestureHelper());
+//        image_view.setOnTouchListener(new ViewGestureHelper());
     }
 }
