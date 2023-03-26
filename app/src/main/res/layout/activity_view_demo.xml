@@ -34,8 +34,8 @@
         android:visibility="gone" />
 
     <com.bzcommon.GestureView
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:background="@color/red_bg">
 
         <ImageView

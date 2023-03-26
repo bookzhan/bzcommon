@@ -1,5 +1,6 @@
 package com.bzcommon;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.PointF;
@@ -31,13 +32,16 @@ public class GestureView extends FrameLayout {
     }
 
     private Mode mode = Mode.NONE;
-    private PointF start = new PointF();
-    private PointF mid = new PointF();
+    private final PointF start = new PointF();
+    private final PointF mid = new PointF();
     private float oldDist = 1f;
     private float oldRotation = 0f;
-    private Matrix matrix = new Matrix();
-    private Matrix savedMatrix = new Matrix();
+    private final Matrix matrix = new Matrix();
+    private final Matrix savedMatrix = new Matrix();
+    private final float[] values = new float[9];
+    private final int[] location = new int[2];
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
@@ -52,9 +56,6 @@ public class GestureView extends FrameLayout {
                 savedMatrix.set(matrix);
                 getMidPoint(mid, event);
                 mode = Mode.ZOOM;
-//                if (oldRotation > 10f) {
-//                    mode = Mode.ROTATE;
-//                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (mode == Mode.DRAG) {
@@ -69,12 +70,6 @@ public class GestureView extends FrameLayout {
                     matrix.set(savedMatrix);
                     matrix.postScale(scale, scale, mid.x, mid.y);
                     matrix.postRotate(angle, mid.x, mid.y);
-                    setPivotX(mid.x);
-                    setPivotY(mid.y);
-                } else if (mode == Mode.ROTATE) {
-
-                    matrix.set(savedMatrix);
-
                 }
                 break;
             case MotionEvent.ACTION_POINTER_UP:
@@ -86,7 +81,7 @@ public class GestureView extends FrameLayout {
     }
 
     private float getDistance(MotionEvent event) {
-        int[] location = new int[2];
+
         getLocationOnScreen(location);
         float pointer0RawX = event.getX(0) * getScaleX() + location[0];
         float pointer0RawY = event.getY(0) * getScaleY() + location[1];
@@ -112,24 +107,17 @@ public class GestureView extends FrameLayout {
     }
 
     private void setMatrix(Matrix matrix) {
-        float[] values = new float[9];
         matrix.getValues(values);
         float scaleX = values[Matrix.MSCALE_X];
-        float skewY = values[Matrix.MSKEW_Y];
         float transX = values[Matrix.MTRANS_X];
-        float skewX = values[Matrix.MSKEW_X];
         float scaleY = values[Matrix.MSCALE_Y];
         float transY = values[Matrix.MTRANS_Y];
-        float persp0 = values[Matrix.MPERSP_0];
-        float persp1 = values[Matrix.MPERSP_1];
-        float persp2 = values[Matrix.MPERSP_2];
 
-//        setScaleX(scaleX);
-//        setScaleY(scaleY);
+        setScaleX(scaleX);
+        setScaleY(scaleY);
         setTranslationX(transX);
         setTranslationY(transY);
-        // Set rotation
-        float angle = (float) Math.atan2(values[Matrix.MSKEW_Y], values[Matrix.MSCALE_Y]) * (180 / (float) Math.PI);
-        setRotation(angle % 360);
+//        float angle = (float) Math.atan2(values[Matrix.MSKEW_Y], values[Matrix.MSCALE_Y]) * (180 / (float) Math.PI)*0.5f;
+//        setRotation(angle % 360);
     }
 }
