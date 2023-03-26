@@ -11,6 +11,8 @@ public class MoveScaleRotateView extends FrameLayout {
     private float translationY; // 移动Y
     private float scale = 1; // 伸缩比例
     private float rotation; // 旋转角度
+    private float mPivotX = 0;
+    private float mPivotY = 0;
 
     // 移动过程中临时变量
     private float actionX;
@@ -38,15 +40,29 @@ public class MoveScaleRotateView extends FrameLayout {
 //        return super.onInterceptTouchEvent(ev);
 //    }
 
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        if (mPivotX == 0) {
+            mPivotX = w / 2;
+            mPivotY = h / 2;
+        }
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 moveType = 1;
+                translationX = getTranslationX();
+                translationY = getTranslationY();
                 actionX = event.getRawX();
                 actionY = event.getRawY();
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
+                translationX = getTranslationX();
+                translationY = getTranslationY();
                 moveType = 2;
                 spacing = getSpacing(event);
                 degree = getDegree(event);
@@ -60,6 +76,12 @@ public class MoveScaleRotateView extends FrameLayout {
                     actionX = event.getRawX();
                     actionY = event.getRawY();
                 } else if (moveType == 2) {
+                    translationX = translationX + event.getRawX() - actionX;
+                    translationY = translationY + event.getRawY() - actionY;
+                    setPivotX((event.getX(0) + event.getX(1)) / 2);
+                    setPivotY((event.getY(0) + event.getY(1)) / 2);
+                    setTranslationX(translationX);
+                    setTranslationY(translationY);
                     scale = scale * getSpacing(event) / spacing;
                     setScaleX(scale);
                     setScaleY(scale);
@@ -80,6 +102,7 @@ public class MoveScaleRotateView extends FrameLayout {
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 moveType = 1;
+                break;
         }
         return super.onTouchEvent(event);
     }

@@ -6,9 +6,10 @@
     tools:context=".ViewDemoActivity">
 
     <com.bzcommon.MoveScaleRotateView
-        android:layout_width="300px"
-        android:layout_height="300px"
-        android:background="@color/red_bg">
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@color/red_bg"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="match_parent"
@@ -25,5 +26,10 @@
         android:scaleType="centerCrop"
         android:src="@drawable/test_11"
         android:visibility="gone" />
+
+    <com.bzcommon.MultiTouchView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@color/red_bg" />
 
 </FrameLayout>
