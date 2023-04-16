@@ -27,4 +27,8 @@ public class BZFilePathUtil {
     public static String getAAudioPath(Context context) {
         return context.getExternalFilesDir(Environment.DIRECTORY_MUSIC).getAbsolutePath() + "/audio_" + System.nanoTime() + ".m4a";
     }
+
+    public static String getAImagePath(Context context) {
+        return context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath() + "/IMG_" + System.nanoTime() + ".jpg";
+    }
 }

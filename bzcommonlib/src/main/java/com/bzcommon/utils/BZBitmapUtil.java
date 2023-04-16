@@ -47,7 +47,7 @@ import java.io.OutputStream;
  */
 public class BZBitmapUtil {
 
-    private static final String TAG = "Blur";
+    private static final String TAG = "BZBitmapUtil";
 
 
     /**
@@ -462,7 +462,7 @@ public class BZBitmapUtil {
         try {
             FileOutputStream fileout = new FileOutputStream(path);
             BufferedOutputStream bufferOutStream = new BufferedOutputStream(fileout);
-            bitmap.compress(CompressFormat.JPEG, 95, bufferOutStream);
+            bitmap.compress(CompressFormat.JPEG, 100, bufferOutStream);
             bufferOutStream.flush();
             bufferOutStream.close();
             return true;
@@ -481,7 +481,7 @@ public class BZBitmapUtil {
         try {
             FileOutputStream fileout = new FileOutputStream(path);
             BufferedOutputStream bufferOutStream = new BufferedOutputStream(fileout);
-            bitmap.compress(CompressFormat.PNG, 95, bufferOutStream);
+            bitmap.compress(CompressFormat.PNG, 100, bufferOutStream);
             bufferOutStream.flush();
             bufferOutStream.close();
         } catch (Exception e) {
@@ -553,45 +553,6 @@ public class BZBitmapUtil {
     /**
      * 防止加载本地图片OOM
      *
-     * @param absolutePath 本地地址
-     * @param targetWidth  希望的宽
-     * @param targetHeight 希望的高
-     * @return 缩放过的Bitmap
-     */
-    public static Bitmap loadBitmap(String absolutePath, int targetWidth, int targetHeight) {
-        Bitmap bm = null;
-        try {
-            BitmapFactory.Options opt = new BitmapFactory.Options();
-            // 这个isjustdecodebounds很重要
-            opt.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(absolutePath, opt);
-            // 获取到这个图片的原始宽度和高度
-            int picWidth = opt.outWidth;
-            int picHeight = opt.outHeight;
-
-            // isSampleSize是表示对图片的缩放程度，比如值为2图片的宽度和高度都变为以前的1/2
-            opt.inSampleSize = 1;
-            // 根据屏的大小和图片大小计算出缩放比例
-            if (picWidth > picHeight) {
-                if (picWidth > targetWidth)
-                    opt.inSampleSize = picWidth / targetWidth;
-            } else {
-                if (picHeight > targetHeight)
-                    opt.inSampleSize = picHeight / targetHeight;
-            }
-            // 这次再真正地生成一个有像素的，经过缩放了的bitmap
-            opt.inJustDecodeBounds = false;
-            bm = BitmapFactory.decodeFile(absolutePath, opt);
-        } catch (Exception e) {
-
-            BZLogUtil.e(TAG, e);
-        }
-        return bm;
-    }
-
-    /**
-     * 防止加载本地图片OOM
-     *
      * @param path 本地地址,可以是absolutePath,也可以是Uri Content path
      */
     public static Bitmap loadBitmap(Context context, String path) {
@@ -602,7 +563,11 @@ public class BZBitmapUtil {
         InputStream inputStream1 = null;
         InputStream inputStream2 = null;
         try {
-            inputStream1 = context.getContentResolver().openInputStream(Uri.parse(path));
+            Uri uri = Uri.parse(path);
+            if (path.startsWith("/")) {
+                uri = Uri.fromFile(new File(path));
+            }
+            inputStream1 = context.getContentResolver().openInputStream(uri);
             BitmapFactory.Options opt = new BitmapFactory.Options();
             opt.inJustDecodeBounds = true;
             BitmapFactory.decodeStream(inputStream1, null, opt);
@@ -621,14 +586,14 @@ public class BZBitmapUtil {
             }
             // 这次再真正地生成一个有像素的，经过缩放了的bitmap
             opt.inJustDecodeBounds = false;
-            inputStream2 = context.getContentResolver().openInputStream(Uri.parse(path));
+            inputStream2 = context.getContentResolver().openInputStream(uri);
             bm = BitmapFactory.decodeStream(inputStream2, null, opt);
         } catch (Throwable e) {
             BZLogUtil.e(TAG, e);
         }
         BZFileUtils.closeStream(inputStream1);
         BZFileUtils.closeStream(inputStream2);
-        int pictureDegree = readPictureDegree(context, path);
+        int pictureDegree = readPictureRotateDegree(context, path);
         if (null != bm && pictureDegree != 0) {
             bm = rotateBitmap(bm, pictureDegree);
         }
@@ -637,14 +602,19 @@ public class BZBitmapUtil {
 
     /**
      * 读取图片属性：旋转的角度
+     * ExifInterface可以设置旋转角度,用于测试 详见writePictureRotateDegree
      *
      * @param path 图片路径 可以是absolutePath,也可以是Uri Content path
      * @return degree旋转的角度
      */
-    public static int readPictureDegree(Context context, String path) {
+    public static int readPictureRotateDegree(Context context, String path) {
         int degree = 0;
         try {
-            InputStream inputStream = context.getContentResolver().openInputStream(Uri.parse(path));
+            Uri uri = Uri.parse(path);
+            if (path.startsWith("/")) {
+                uri = Uri.fromFile(new File(path));
+            }
+            InputStream inputStream = context.getContentResolver().openInputStream(uri);
             ExifInterface exifInterface = new ExifInterface(inputStream);
             int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
             switch (orientation) {
@@ -663,6 +633,30 @@ public class BZBitmapUtil {
             BZLogUtil.e(TAG, e);
         }
         return degree;
+    }
+
+    /**
+     * @param path 绝对路径,saveAttributes不支持Uri
+     */
+    public static void writePictureRotateDegree(String path, int rotate) {
+        try {
+            rotate = rotate % 360;
+            ExifInterface exifInterface = new ExifInterface(path);
+            switch (rotate) {
+                case 90:
+                    exifInterface.setAttribute(ExifInterface.TAG_ORIENTATION, Integer.toString(ExifInterface.ORIENTATION_ROTATE_90));
+                    break;
+                case 180:
+                    exifInterface.setAttribute(ExifInterface.TAG_ORIENTATION, Integer.toString(ExifInterface.ORIENTATION_ROTATE_180));
+                    break;
+                case 270:
+                    exifInterface.setAttribute(ExifInterface.TAG_ORIENTATION, Integer.toString(ExifInterface.ORIENTATION_ROTATE_270));
+                    break;
+            }
+            exifInterface.saveAttributes();
+        } catch (Throwable e) {
+            BZLogUtil.e(TAG, e);
+        }
     }
 
     public static Bitmap drawableToBitmap(Drawable drawable) {

@@ -12,6 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.math.BigInteger;
 import java.net.FileNameMap;
@@ -327,8 +328,10 @@ public class BZFileUtils {
     /**
      * 文件拷贝
      */
+    @SuppressWarnings("all")
     public static boolean fileCopy(String from, String to) {
         try {
+            createNewFile(to);
             FileInputStream fileInputStream = new FileInputStream(from);
             boolean fileCopy = fileCopy(fileInputStream, new FileOutputStream(to));
             fileInputStream.close();
@@ -339,11 +342,13 @@ public class BZFileUtils {
         return false;
     }
 
+    @SuppressWarnings("all")
     public static boolean fileCopy(InputStream in, String to) {
         if (null == in || null == to) {
             return false;
         }
         try {
+            createNewFile(to);
             return fileCopy(in, new FileOutputStream(to));
         } catch (Throwable e) {
             BZLogUtil.e(e);
@@ -351,7 +356,7 @@ public class BZFileUtils {
         return false;
     }
 
-    public static boolean fileCopy(InputStream in, FileOutputStream out) {
+    public static boolean fileCopy(InputStream in, OutputStream out) {
         if (null == in || null == out) {
             closeStream(in);
             closeStream(out);
@@ -387,6 +392,7 @@ public class BZFileUtils {
         }
     }
 
+    @SuppressWarnings("all")
     public static File createNewFile(String fileWithPath) {
         File file = new File(fileWithPath);
         if (null == file.getParentFile()) {

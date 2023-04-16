@@ -2,12 +2,12 @@ package com.bzcommon;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bzcommon.utils.BZFileUtils;
-import com.bzcommon.utils.BZLogUtil;
+import com.bzcommon.utils.BZBitmapUtil;
 import com.bzcommon.utils.BZSpUtils;
 
 
@@ -28,8 +28,10 @@ public class MainActivity extends AppCompatActivity {
 //
 //        String finalPath2 = BZAssetsFileManager.getFinalPath(this, "lookup.png");
 //        BZLogUtil.d(TAG, finalPath2);
-        String readAssetsFile = BZFileUtils.readAssetsFile(this, "test.txt");
-        BZLogUtil.d(TAG, "readAssetsFile=" + readAssetsFile);
+//        String readAssetsFile = BZFileUtils.readAssetsFile(this, "test.txt");
+//        BZLogUtil.d(TAG, "readAssetsFile=" + readAssetsFile);
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/bzmedia/PXL_20230416_092106677.jpg";
+        BZBitmapUtil.writePictureRotateDegree(path, 180);
     }
 
     public void GLImageActivity(View view) {
