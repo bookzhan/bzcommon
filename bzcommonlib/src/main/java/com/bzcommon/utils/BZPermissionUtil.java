@@ -97,14 +97,16 @@ public class BZPermissionUtil {
     /**
      * @return false has no permission, true has all permissions
      */
-    public static boolean requestFileReadPermission(AppCompatActivity activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (!Environment.isExternalStorageManager()) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-                activity.startActivityForResult(intent, CODE_REQ_PERMISSION);
-                return false;
-            }
-            return true;
+    public static boolean requestMediaFileReadPermission(AppCompatActivity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return BZPermissionUtil.requestPermissionIfNot(
+                    activity,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_MEDIA_AUDIO,
+                            Manifest.permission.READ_MEDIA_VIDEO,
+                            Manifest.permission.READ_MEDIA_IMAGES},
+                    CODE_REQ_PERMISSION
+            );
         } else {
             return BZPermissionUtil.requestPermissionIfNot(
                     activity,
