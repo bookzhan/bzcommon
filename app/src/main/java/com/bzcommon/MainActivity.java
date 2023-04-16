@@ -6,11 +6,9 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bzcommon.utils.BZFileUtils;
 import com.bzcommon.utils.BZLogUtil;
-import com.bzcommon.utils.BZPermissionUtil;
 import com.bzcommon.utils.BZSpUtils;
-
-import java.io.File;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -22,7 +20,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         BZSpUtils.init(getApplicationContext());
-        BZPermissionUtil.requestMediaFileReadPermission(this);
     }
 
     public void start(View view) {
@@ -31,11 +28,8 @@ public class MainActivity extends AppCompatActivity {
 //
 //        String finalPath2 = BZAssetsFileManager.getFinalPath(this, "lookup.png");
 //        BZLogUtil.d(TAG, finalPath2);
-//        String readAssetsFile = BZFileUtils.readAssetsFile(this, "test.txt");
-//        BZLogUtil.d(TAG, "readAssetsFile=" + readAssetsFile);
-
-        File file = new File("/sdcard/bzmedia/out.mp4");
-        BZLogUtil.d(TAG, "file canRead=" + file.canRead() + " canWrite=" + file.canWrite());
+        String readAssetsFile = BZFileUtils.readAssetsFile(this, "test.txt");
+        BZLogUtil.d(TAG, "readAssetsFile=" + readAssetsFile);
     }
 
     public void GLImageActivity(View view) {
@@ -44,5 +38,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void ViewDemoActivity(View view) {
         startActivity(new Intent(this, ViewDemoActivity.class));
+    }
+
+    public void PermissionTestActivity(View view) {
+        startActivity(new Intent(this, PermissionTestActivity.class));
     }
 }

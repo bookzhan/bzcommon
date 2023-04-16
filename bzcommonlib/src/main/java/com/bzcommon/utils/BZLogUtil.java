@@ -26,7 +26,12 @@ public class BZLogUtil {
         if (isShowLog) {
             android.util.Log.v(TAG_PREFIX, msg);
         }
+    }
 
+    public static void v(Object obj, String msg) {
+        if (isShowLog && null != obj) {
+            android.util.Log.v(TAG_PREFIX + obj.getClass().getSimpleName(), msg);
+        }
     }
 
     public static void d(String tag, String msg) {
@@ -39,7 +44,12 @@ public class BZLogUtil {
         if (isShowLog) {
             android.util.Log.d(TAG_PREFIX, msg);
         }
+    }
 
+    public static void d(Object obj, String msg) {
+        if (isShowLog && null != obj) {
+            android.util.Log.d(TAG_PREFIX + obj.getClass().getSimpleName(), msg);
+        }
     }
 
     public static void w(String tag, String msg) {
@@ -52,7 +62,12 @@ public class BZLogUtil {
         if (isShowLog) {
             android.util.Log.w(TAG_PREFIX, msg);
         }
+    }
 
+    public static void w(Object obj, String msg) {
+        if (isShowLog && null != obj) {
+            android.util.Log.w(TAG_PREFIX + obj.getClass().getSimpleName(), msg);
+        }
     }
 
     /**
@@ -101,7 +116,13 @@ public class BZLogUtil {
 
     public static void e(String msg) {
         if (isShowLog) {
-            android.util.Log.e(TAG_PREFIX + TAG_PREFIX, msg);
+            android.util.Log.e(TAG_PREFIX, msg);
+        }
+    }
+
+    public static void e(Object obj, String msg) {
+        if (isShowLog && null != obj) {
+            android.util.Log.e(TAG_PREFIX + obj.getClass().getSimpleName(), msg);
         }
     }
 
@@ -120,6 +141,12 @@ public class BZLogUtil {
     public static void e(String msg, Throwable tr) {
         if (isShowLog) {
             android.util.Log.e(TAG_PREFIX, msg, tr);
+        }
+    }
+
+    public static void e(Object obj, String msg, Throwable tr) {
+        if (isShowLog && null != obj) {
+            android.util.Log.e(TAG_PREFIX + obj.getClass().getSimpleName(), msg, tr);
         }
     }
 

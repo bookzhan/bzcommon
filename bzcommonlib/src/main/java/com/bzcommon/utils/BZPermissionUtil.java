@@ -18,6 +18,15 @@ import java.util.ArrayList;
 /**
  * Created by admin on 2016/2/17.
  * 动态权限请求的相关工具类
+ * 需要适配测试的机器有:
+ * 如果想要畅快的访问媒体文件需要各个Android版本都需要申请READ_EXTERNAL_STORAGE
+ * =Android 27
+ * =Android 28
+ * =Android 29
+ * =Android 30
+ * >Android 30
+ * =Android 33
+ * 在Android>=29需要用 MediaStore API访问媒体文件
  */
 public class BZPermissionUtil {
     private static final String TAG = "PermissionUtil";
