@@ -35,8 +35,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:onClick="PermissionTestActivity"
-        android:text="PermissionTestActivity"
+        android:onClick="FileReadWriteTestActivity"
+        android:text="FileReadWriteTestActivity"
         android:textAllCaps="false" />
 
 </LinearLayout>

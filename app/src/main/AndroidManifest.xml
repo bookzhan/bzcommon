@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".PermissionTestActivity"
+            android:name=".FileReadWriteTestActivity"
             android:exported="false" />
         <activity
             android:name=".ViewDemoActivity"

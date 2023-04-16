@@ -592,20 +592,23 @@ public class BZBitmapUtil {
     /**
      * 防止加载本地图片OOM
      *
-     * @param absolutePath 本地地址
+     * @param path 本地地址,可以是absolutePath,也可以是Uri Content path
      */
-    public static Bitmap loadBitmap(Context context, String absolutePath) {
+    public static Bitmap loadBitmap(Context context, String path) {
+        if (null == context || null == path) {
+            return null;
+        }
         Bitmap bm = null;
+        InputStream inputStream1 = null;
+        InputStream inputStream2 = null;
         try {
+            inputStream1 = context.getContentResolver().openInputStream(Uri.parse(path));
             BitmapFactory.Options opt = new BitmapFactory.Options();
-            // 这个isjustdecodebounds很重要
             opt.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(absolutePath, opt);
-            // 获取到这个图片的原始宽度和高度
+            BitmapFactory.decodeStream(inputStream1, null, opt);
             int picWidth = opt.outWidth;
             int picHeight = opt.outHeight;
 
-            // isSampleSize是表示对图片的缩放程度，比如值为2图片的宽度和高度都变为以前的1/2
             opt.inSampleSize = 1;
             // 根据屏的大小和图片大小计算出缩放比例
             Point screenSize = BZScreenUtils.getScreenSize(context);
@@ -618,11 +621,14 @@ public class BZBitmapUtil {
             }
             // 这次再真正地生成一个有像素的，经过缩放了的bitmap
             opt.inJustDecodeBounds = false;
-            bm = BitmapFactory.decodeFile(absolutePath, opt);
-        } catch (Exception e) {
+            inputStream2 = context.getContentResolver().openInputStream(Uri.parse(path));
+            bm = BitmapFactory.decodeStream(inputStream2, null, opt);
+        } catch (Throwable e) {
             BZLogUtil.e(TAG, e);
         }
-        int pictureDegree = readPictureDegree(absolutePath);
+        BZFileUtils.closeStream(inputStream1);
+        BZFileUtils.closeStream(inputStream2);
+        int pictureDegree = readPictureDegree(context, path);
         if (null != bm && pictureDegree != 0) {
             bm = rotateBitmap(bm, pictureDegree);
         }
@@ -632,13 +638,14 @@ public class BZBitmapUtil {
     /**
      * 读取图片属性：旋转的角度
      *
-     * @param path 图片绝对路径
+     * @param path 图片路径 可以是absolutePath,也可以是Uri Content path
      * @return degree旋转的角度
      */
-    public static int readPictureDegree(String path) {
+    public static int readPictureDegree(Context context, String path) {
         int degree = 0;
         try {
-            ExifInterface exifInterface = new ExifInterface(path);
+            InputStream inputStream = context.getContentResolver().openInputStream(Uri.parse(path));
+            ExifInterface exifInterface = new ExifInterface(inputStream);
             int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
             switch (orientation) {
                 case ExifInterface.ORIENTATION_ROTATE_90:
@@ -651,6 +658,7 @@ public class BZBitmapUtil {
                     degree = 270;
                     break;
             }
+            inputStream.close();
         } catch (Throwable e) {
             BZLogUtil.e(TAG, e);
         }

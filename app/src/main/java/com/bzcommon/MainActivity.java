@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, ViewDemoActivity.class));
     }
 
-    public void PermissionTestActivity(View view) {
-        startActivity(new Intent(this, PermissionTestActivity.class));
+    public void FileReadWriteTestActivity(View view) {
+        startActivity(new Intent(this, FileReadWriteTestActivity.class));
     }
 }

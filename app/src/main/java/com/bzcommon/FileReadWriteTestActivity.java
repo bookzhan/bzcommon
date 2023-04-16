@@ -1,0 +1,78 @@
+package com.bzcommon;
+
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.VideoView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.bzcommon.util.GlideEngine;
+import com.bzcommon.utils.BZBitmapUtil;
+import com.bzcommon.utils.BZLogUtil;
+import com.bzcommon.utils.BZPermissionUtil;
+import com.luck.picture.lib.basic.PictureSelector;
+import com.luck.picture.lib.config.SelectMimeType;
+import com.luck.picture.lib.config.SelectModeConfig;
+import com.luck.picture.lib.entity.LocalMedia;
+import com.luck.picture.lib.interfaces.OnResultCallbackListener;
+
+import java.io.File;
+import java.util.ArrayList;
+
+public class FileReadWriteTestActivity extends AppCompatActivity {
+
+    private ImageView mImageView;
+    private VideoView mVideoView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_permission_test);
+        mImageView = findViewById(R.id.iv_test);
+        mVideoView = findViewById(R.id.video_view);
+    }
+
+    public void requestMediaFileReadPermission(View view) {
+        BZPermissionUtil.requestMediaFileReadPermission(this);
+    }
+
+    public void FileReadTest(View view) {
+        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/bzmedia/out.mp4");
+        BZLogUtil.d(this, "file exists=" + file.exists() + " canRead=" + file.canRead() + " canWrite=" + file.canWrite() + " length=" + file.length());
+        PictureSelector.create(this)
+                .openGallery(SelectMimeType.ofAll())
+                .setImageEngine(GlideEngine.createGlideEngine())
+                .isDisplayCamera(false)
+                .setSelectionMode(SelectModeConfig.SINGLE)
+                .forResult(new OnResultCallbackListener<LocalMedia>() {
+                    @Override
+                    public void onResult(ArrayList<LocalMedia> result) {
+                        BZLogUtil.d("PictureSelector onResult");
+                        if (null == result || result.isEmpty()) {
+                            return;
+                        }
+                        LocalMedia localMedia = result.get(0);
+                        String path = localMedia.getPath();
+                        String realPath = localMedia.getRealPath();
+                        BZLogUtil.d("path=" + path);
+                        BZLogUtil.d("realPath=" + realPath);
+                        if(localMedia.getMimeType().contains("video")){
+                            mVideoView.setVideoURI(Uri.parse(path));
+                            mVideoView.start();
+                        }else {
+                            Bitmap bitmap = BZBitmapUtil.loadBitmap(FileReadWriteTestActivity.this, path);
+                            mImageView.setImageBitmap(bitmap);
+                        }
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+                });
+    }
+}
