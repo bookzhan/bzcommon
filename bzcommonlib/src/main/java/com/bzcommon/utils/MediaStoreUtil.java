@@ -16,7 +16,7 @@ import java.io.OutputStream;
 
 /**
  * Created by bookzhan on 2023−04-16 19:09.
- * description:
+ * description:对公共文件的读写类封装
  */
 public class MediaStoreUtil {
     private static final String TAG = "bz_MediaStoreUtil";
@@ -43,7 +43,6 @@ public class MediaStoreUtil {
                 return null;
             }
             String imagePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_PICTURES + "/" + name;
-            BZFileUtils.createNewFile(imagePath);
             BZBitmapUtil.saveBitmapToSDcard(bitmap, imagePath);
             return imagePath;
         }
@@ -99,5 +98,14 @@ public class MediaStoreUtil {
             BZLogUtil.e(TAG, e);
         }
         return null;
+    }
+
+    /**
+     * 防止加载本地图片OOM
+     *
+     * @param path 本地地址,可以是absolutePath,也可以是Uri Content path
+     */
+    public static Bitmap loadBitmap(Context context, String path) {
+        return BZBitmapUtil.loadBitmap(context, path);
     }
 }

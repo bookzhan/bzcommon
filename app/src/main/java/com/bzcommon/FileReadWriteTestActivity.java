@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bzcommon.util.GlideEngine;
 import com.bzcommon.utils.BZAssetsFileManager;
-import com.bzcommon.utils.BZBitmapUtil;
 import com.bzcommon.utils.BZLogUtil;
 import com.bzcommon.utils.BZPermissionUtil;
 import com.bzcommon.utils.MediaStoreUtil;
@@ -67,7 +66,7 @@ public class FileReadWriteTestActivity extends AppCompatActivity {
                             mVideoView.setVideoURI(Uri.parse(path));
                             mVideoView.start();
                         } else {
-                            Bitmap bitmap = BZBitmapUtil.loadBitmap(FileReadWriteTestActivity.this, path);
+                            Bitmap bitmap = MediaStoreUtil.loadBitmap(FileReadWriteTestActivity.this, path);
                             mImageView.setImageBitmap(bitmap);
                         }
                     }

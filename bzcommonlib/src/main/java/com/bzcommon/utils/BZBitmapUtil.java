@@ -460,6 +460,7 @@ public class BZBitmapUtil {
      */
     public static boolean saveBitmapToSDcard(Bitmap bitmap, String path) {
         try {
+            BZFileUtils.createNewFile(path);
             FileOutputStream fileout = new FileOutputStream(path);
             BufferedOutputStream bufferOutStream = new BufferedOutputStream(fileout);
             bitmap.compress(CompressFormat.JPEG, 100, bufferOutStream);
@@ -479,6 +480,7 @@ public class BZBitmapUtil {
      */
     public static void saveBitmapToFile(Bitmap bitmap, String path) {
         try {
+            BZFileUtils.createNewFile(path);
             FileOutputStream fileout = new FileOutputStream(path);
             BufferedOutputStream bufferOutStream = new BufferedOutputStream(fileout);
             bitmap.compress(CompressFormat.PNG, 100, bufferOutStream);
