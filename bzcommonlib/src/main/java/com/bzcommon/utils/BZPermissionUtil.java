@@ -104,14 +104,15 @@ public class BZPermissionUtil {
     }
 
     /**
+     * 针对使用MediaStore api的权限申请
+     *
      * @return false has no permission, true has all permissions
      */
-    public static boolean requestMediaFileReadPermission(AppCompatActivity activity) {
+    public static boolean requestVideoImageFileReadPermission(AppCompatActivity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             return BZPermissionUtil.requestPermissionIfNot(
                     activity,
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_MEDIA_AUDIO,
                             Manifest.permission.READ_MEDIA_VIDEO,
                             Manifest.permission.READ_MEDIA_IMAGES},
                     CODE_REQ_PERMISSION
@@ -126,26 +127,26 @@ public class BZPermissionUtil {
     }
 
     /**
+     * 针对使用MediaStore api的权限申请
+     *
      * @return false has no permission, true has all permissions
      */
-    public static boolean requestFileReadWritePermission(AppCompatActivity activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (!Environment.isExternalStorageManager()) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-                activity.startActivityForResult(intent, CODE_REQ_PERMISSION);
-                return false;
-            }
-            return true;
-        } else {
+    public static boolean requestVideoImageFileWritePermission(AppCompatActivity activity) {
+        //Android 29及以上使用MediaStore写音视频文件,不需要申请权限
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
             return BZPermissionUtil.requestPermissionIfNot(
                     activity,
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     CODE_REQ_PERMISSION
             );
         }
+        return true;
     }
 
-    public static boolean requestCommonPermission(AppCompatActivity activity) {
+    /**
+     * 为了方便测试使用的,Release环境不建议使用
+     */
+    public static boolean requestCommonTestPermission(AppCompatActivity activity) {
         if (null == activity) {
             return false;
         }

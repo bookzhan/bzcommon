@@ -15,7 +15,7 @@ import com.bzcommon.util.GlideEngine;
 import com.bzcommon.utils.BZAssetsFileManager;
 import com.bzcommon.utils.BZLogUtil;
 import com.bzcommon.utils.BZPermissionUtil;
-import com.bzcommon.utils.MediaStoreUtil;
+import com.bzcommon.utils.BZMediaStoreUtil;
 import com.luck.picture.lib.basic.PictureSelector;
 import com.luck.picture.lib.config.SelectMimeType;
 import com.luck.picture.lib.config.SelectModeConfig;
@@ -38,8 +38,8 @@ public class FileReadWriteTestActivity extends AppCompatActivity {
         mVideoView = findViewById(R.id.video_view);
     }
 
-    public void requestMediaFileReadPermission(View view) {
-        BZPermissionUtil.requestMediaFileReadPermission(this);
+    public void requestVideoImageFileReadPermission(View view) {
+        BZPermissionUtil.requestVideoImageFileReadPermission(this);
     }
 
     public void FileReadTest(View view) {
@@ -66,9 +66,10 @@ public class FileReadWriteTestActivity extends AppCompatActivity {
                             mVideoView.setVideoURI(Uri.parse(path));
                             mVideoView.start();
                         } else {
-                            Bitmap bitmap = MediaStoreUtil.loadBitmap(FileReadWriteTestActivity.this, path);
+                            Bitmap bitmap = BZMediaStoreUtil.loadBitmap(FileReadWriteTestActivity.this, path);
                             mImageView.setImageBitmap(bitmap);
                         }
+                        BZMediaStoreUtil.getDirectlyReadPath(FileReadWriteTestActivity.this, path, realPath);
                     }
 
                     @Override
@@ -80,13 +81,13 @@ public class FileReadWriteTestActivity extends AppCompatActivity {
 
     public void WriteImage(View view) {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test_11);
-        String path = MediaStoreUtil.saveBitmapToSdcard(this, bitmap);
+        String path = BZMediaStoreUtil.saveBitmapToSdcard(this, bitmap);
         BZLogUtil.d("path=" + path);
     }
 
     public void saveVideo(View view) {
         String finalPath = BZAssetsFileManager.getFinalPath(this, "video_test.mp4");
-        String saveVideo = MediaStoreUtil.saveVideoToSdcard(this, finalPath);
+        String saveVideo = BZMediaStoreUtil.saveVideoToSdcard(this, finalPath);
         BZLogUtil.d("path=" + saveVideo);
     }
 }

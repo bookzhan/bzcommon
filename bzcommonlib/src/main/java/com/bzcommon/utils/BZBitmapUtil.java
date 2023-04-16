@@ -773,38 +773,6 @@ public class BZBitmapUtil {
         return targetBitmap;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    public static String saveBitmapByMediaStore(Context context, Bitmap bitmap, String name) {
-        ContentResolver contentResolver = context.getContentResolver();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(MediaStore.Images.ImageColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES);
-        contentValues.put(MediaStore.Images.ImageColumns.DISPLAY_NAME, name);
-        contentValues.put(MediaStore.Images.ImageColumns.MIME_TYPE, "image/jpeg");
-        contentValues.put(MediaStore.Images.ImageColumns.WIDTH, bitmap.getWidth());
-        contentValues.put(MediaStore.Images.ImageColumns.HEIGHT, bitmap.getHeight());
-        Uri uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-        if (uri == null) {
-            return null;
-        }
-        //写入图片
-        OutputStream out = null;
-        try {
-            out = contentResolver.openOutputStream(uri);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (out != null) {
-                    out.flush();
-                    out.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_PICTURES + "/" + name;
-    }
 
     private static boolean saveBitmap(Bitmap bitmap, String path) {
         try {
@@ -821,27 +789,4 @@ public class BZBitmapUtil {
         return false;
     }
 
-    /**
-     * 新老版本均兼容
-     *
-     * @return file path
-     */
-    public static String saveBitmapToExternalStorage(Context context, Bitmap bitmap) {
-        if (null == context || null == bitmap || bitmap.isRecycled()) {
-            return null;
-        }
-        String name = "IMG_" + System.currentTimeMillis() + ".jpg";
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            if (!BZPermissionUtil.requestFileReadWritePermission((AppCompatActivity) context)) {
-                return null;
-            }
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_PICTURES + "/" + name;
-            if (saveBitmap(bitmap, path)) {
-                return path;
-            }
-        } else {
-            return saveBitmapByMediaStore(context, bitmap, name);
-        }
-        return null;
-    }
 }

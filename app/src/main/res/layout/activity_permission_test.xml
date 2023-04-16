@@ -29,7 +29,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="requestMediaFileReadPermission"
+        android:onClick="requestVideoImageFileReadPermission"
         android:text="请求媒体文件读取权限" />
 
     <Button
