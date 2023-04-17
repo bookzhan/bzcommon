@@ -43,6 +43,10 @@ public class FileReadWriteTestActivity extends AppCompatActivity {
     }
 
     public void FileReadTest(View view) {
+        boolean hasPermission= BZPermissionUtil.requestVideoImageFileReadPermission(this);
+        if(!hasPermission){
+            return;   
+        }
         File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/bzmedia/out.mp4");
         BZLogUtil.d(this, "file exists=" + file.exists() + " canRead=" + file.canRead() + " canWrite=" + file.canWrite() + " length=" + file.length());
         PictureSelector.create(this)
@@ -80,12 +84,20 @@ public class FileReadWriteTestActivity extends AppCompatActivity {
     }
 
     public void WriteImage(View view) {
+        boolean hasPermission= BZPermissionUtil.requestVideoImageFileWritePermission(this);
+        if(!hasPermission){
+            return;   
+        }
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test_11);
         String path = BZMediaStoreUtil.saveBitmapToSdcard(this, bitmap);
         BZLogUtil.d("path=" + path);
     }
 
     public void saveVideo(View view) {
+        boolean hasPermission= BZPermissionUtil.requestVideoImageFileWritePermission(this);
+        if(!hasPermission){
+            return;   
+        }
         String finalPath = BZAssetsFileManager.getFinalPath(this, "video_test.mp4");
         String saveVideo = BZMediaStoreUtil.saveVideoToSdcard(this, finalPath);
         BZLogUtil.d("path=" + saveVideo);
