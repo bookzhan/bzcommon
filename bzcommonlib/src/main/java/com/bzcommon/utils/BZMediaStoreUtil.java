@@ -48,6 +48,10 @@ public class BZMediaStoreUtil {
             }
             String imagePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_PICTURES + "/" + name;
             BZBitmapUtil.saveBitmapToSDcard(bitmap, imagePath);
+            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri uri = Uri.fromFile(new File(imagePath));
+            intent.setData(uri);
+            context.sendBroadcast(intent);
             return imagePath;
         }
         try {
@@ -88,6 +92,10 @@ public class BZMediaStoreUtil {
             }
             String videoPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_MOVIES + "/" + name;
             BZFileUtils.fileCopy(path, videoPath);
+            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri uri = Uri.fromFile(new File(videoPath));
+            intent.setData(uri);
+            context.sendBroadcast(intent);
             return videoPath;
         }
         try {
