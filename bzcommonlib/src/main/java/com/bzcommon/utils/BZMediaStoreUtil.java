@@ -134,6 +134,7 @@ public class BZMediaStoreUtil {
         if (!TextUtils.isEmpty(absolutePath)) {
             File file = new File(absolutePath);
             if (file.exists() && file.canRead()) {
+                BZLogUtil.d(TAG, "file can directly read absolutePath=" + absolutePath);
                 return absolutePath;
             }
         }
@@ -141,6 +142,7 @@ public class BZMediaStoreUtil {
             BZLogUtil.d(TAG, "TextUtils.isEmpty(contentUri)");
             return null;
         }
+        //Android 10 api29即使有读取权限也不能访问，需要copy 
         try {
             String displayName = null;
             if (!TextUtils.isEmpty(absolutePath)) {
@@ -165,6 +167,7 @@ public class BZMediaStoreUtil {
                 return finalPath;
             }
             BZFileUtils.fileCopy(context.getContentResolver().openInputStream(uri), finalPath);
+            BZLogUtil.d(TAG, "file can’t directly read finalPath=" + finalPath);
         } catch (Throwable throwable) {
             BZLogUtil.e(TAG, throwable);
         }
