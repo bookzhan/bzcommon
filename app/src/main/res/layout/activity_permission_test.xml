@@ -32,12 +32,6 @@
         android:onClick="requestVideoImageFileReadPermission"
         android:text="请求媒体文件读取权限" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:onClick="FileReadTest"
-        android:text="媒体文件读取权限测试" />
 
     <Button
         android:layout_width="wrap_content"
@@ -53,4 +47,10 @@
         android:onClick="saveVideo"
         android:text="saveVideo" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:onClick="FileReadTest"
+        android:text="媒体文件读取权限测试" />
 </LinearLayout>
