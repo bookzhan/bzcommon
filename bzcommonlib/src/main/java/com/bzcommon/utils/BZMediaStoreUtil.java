@@ -165,6 +165,7 @@ public class BZMediaStoreUtil {
             String finalPath = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath() + "/" + displayName;
             File file = new File(finalPath);
             if (file.exists() && file.canRead() && file.length() > 0) {
+                BZLogUtil.d(TAG, "file can’t directly read get catch file=" + finalPath);
                 return finalPath;
             }
             BZFileUtils.fileCopy(context.getContentResolver().openInputStream(uri), finalPath);
