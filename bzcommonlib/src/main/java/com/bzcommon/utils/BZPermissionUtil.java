@@ -33,6 +33,8 @@ public class BZPermissionUtil {
     public static final int CODE_REQ_PERMISSION = 1100;//权限请求
     public static final int CODE_REQ_AUDIO_PERMISSION = 601;
     public static final int CODE_REQ_CAMERA_PERMISSION = 602;
+    public static final int CODE_REQ_VIDEO_IMAGE_FILE_READ_PERMISSION = 603;
+    public static final int CODE_REQ_VIDEO_IMAGE_FILE_WRITE_PERMISSION = 604;
 
     /**
      * 权限请求
@@ -115,13 +117,13 @@ public class BZPermissionUtil {
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                             Manifest.permission.READ_MEDIA_VIDEO,
                             Manifest.permission.READ_MEDIA_IMAGES},
-                    CODE_REQ_PERMISSION
+                    CODE_REQ_VIDEO_IMAGE_FILE_READ_PERMISSION
             );
         } else {
             return BZPermissionUtil.requestPermissionIfNot(
                     activity,
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    CODE_REQ_PERMISSION
+                    CODE_REQ_VIDEO_IMAGE_FILE_READ_PERMISSION
             );
         }
     }
@@ -137,7 +139,7 @@ public class BZPermissionUtil {
             return BZPermissionUtil.requestPermissionIfNot(
                     activity,
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    CODE_REQ_PERMISSION
+                    CODE_REQ_VIDEO_IMAGE_FILE_WRITE_PERMISSION
             );
         }
         return true;
