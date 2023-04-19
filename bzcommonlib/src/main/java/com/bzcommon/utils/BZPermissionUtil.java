@@ -114,8 +114,7 @@ public class BZPermissionUtil {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             return BZPermissionUtil.requestPermissionIfNot(
                     activity,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_MEDIA_VIDEO,
+                    new String[]{Manifest.permission.READ_MEDIA_VIDEO,
                             Manifest.permission.READ_MEDIA_IMAGES},
                     CODE_REQ_VIDEO_IMAGE_FILE_READ_PERMISSION
             );
