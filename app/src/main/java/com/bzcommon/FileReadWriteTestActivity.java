@@ -1,5 +1,6 @@
 package com.bzcommon;
 
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.VideoView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bzcommon.util.GlideEngine;
@@ -81,6 +83,35 @@ public class FileReadWriteTestActivity extends AppCompatActivity {
 
                     }
                 });
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == BZPermissionUtil.CODE_REQ_VIDEO_IMAGE_FILE_READ_PERMISSION && grantResults.length > 0) {
+            boolean hasPermission = true;
+            for (int grantResult : grantResults) {
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                    hasPermission = false;
+                    break;
+                }
+            }
+            if (hasPermission) {
+                FileReadTest(null);
+                BZLogUtil.d(FileReadWriteTestActivity.this,"hasPermission CODE_REQ_VIDEO_IMAGE_FILE_READ_PERMISSION");
+            }
+        } else if (requestCode == BZPermissionUtil.CODE_REQ_VIDEO_IMAGE_FILE_WRITE_PERMISSION && grantResults.length > 0) {
+            boolean hasPermission = true;
+            for (int grantResult : grantResults) {
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                    hasPermission = false;
+                    break;
+                }
+            }
+            if (hasPermission) {
+                saveVideo(null);
+                BZLogUtil.d(FileReadWriteTestActivity.this,"hasPermission CODE_REQ_VIDEO_IMAGE_FILE_WRITE_PERMISSION");
+            }
+        }
     }
 
     public void WriteImage(View view) {
