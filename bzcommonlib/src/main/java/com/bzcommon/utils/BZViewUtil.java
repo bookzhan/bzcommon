@@ -3,6 +3,9 @@ package com.bzcommon.utils;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by bookzhan on 2023−05-01 10:53.
  * description:
@@ -25,6 +28,20 @@ public class BZViewUtil {
             }
         }
         return null;
+    }
+
+    public static <T> List<T> findAllChildViewByClass(ViewGroup viewGroup, Class<T> clazz) {
+        List<T> result = new ArrayList<>();
+        for (int i = 0; i < viewGroup.getChildCount(); i++) {
+            View child = viewGroup.getChildAt(i);
+            if (clazz.isInstance(child)) {
+                result.add(clazz.cast(child));
+            }
+            if (child instanceof ViewGroup) {
+                result.addAll(findAllChildViewByClass((ViewGroup) child, clazz));
+            }
+        }
+        return result;
     }
 
     public static <T> T findParentViewByClass(View view, Class<T> clazz) {
