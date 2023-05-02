@@ -123,53 +123,54 @@ public class BZMediaStoreUtil {
     }
 
     /**
-     * @param contentUri   内容提供器的地址
-     * @param absolutePath 绝对地址
+     * @param path 最好是内容提供者的地址, 文件地址也可
      * @return 返回一个能直接读取的文件地址
      */
     @SuppressLint("Range")
-    public static String getDirectlyReadPath(Context context, String contentUri, String absolutePath) {
-        if (null == context || (null == contentUri && null == absolutePath)) {
+    public static String getDirectlyReadPath(Context context, String path) {
+        if (null == context || TextUtils.isEmpty(path)) {
+            BZLogUtil.e(TAG, "null == context || TextUtils.isEmpty(contentUri)");
             return null;
         }
-        if (!TextUtils.isEmpty(absolutePath)) {
-            File file = new File(absolutePath);
-            if (file.exists() && file.canRead()) {
-                BZLogUtil.d(TAG, "file can directly read absolutePath=" + absolutePath);
-                return absolutePath;
+        if (path.startsWith("/")) {
+            File realFile = new File(path);
+            if (realFile.exists() && realFile.canRead()) {
+                BZLogUtil.d(TAG, "A file path is a real address that can be read directly:" + path);
+                return path;
             }
-        }
-        if (TextUtils.isEmpty(contentUri)) {
-            BZLogUtil.d(TAG, "TextUtils.isEmpty(contentUri)");
+            BZLogUtil.e(TAG, "The file cannot be read:" + path);
             return null;
         }
-        //Android 10 api29即使有读取权限也不能访问，需要copy 
+        //Android 10 api29即使有读取权限也不能访问，需要copy
         try {
-            String displayName = null;
-            if (!TextUtils.isEmpty(absolutePath)) {
-                String[] split = absolutePath.split("\\.");
-                displayName = BZMD5Util.md5(absolutePath) + "." + split[split.length - 1];
-                BZLogUtil.d(TAG, "md5FileName from split=" + displayName);
+            Uri uri = Uri.parse(path);
+            String[] projection = {MediaStore.Files.FileColumns.DISPLAY_NAME, MediaStore.Files.FileColumns.DATA};
+            Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+            cursor.moveToFirst();
+            String fileName = cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME));
+            String realPath = cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA));
+            cursor.close();
+            if (TextUtils.isEmpty(realPath)) {
+                BZLogUtil.e(TAG, "TextUtils.isEmpty(realPath)");
+                return null;
             }
-            Uri uri = Uri.parse(contentUri);
-            if (TextUtils.isEmpty(displayName)) {
-                String[] projection = {MediaStore.Files.FileColumns.DISPLAY_NAME};
-                Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
-                cursor.moveToFirst();
-                String fileName = cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME));
-                String[] split = fileName.split("\\.");
-                displayName = BZMD5Util.md5(contentUri) + "." + split[split.length - 1];
-                BZLogUtil.d(TAG, "displayName from query=" + displayName);
-                cursor.close();
+            File realFile = new File(realPath);
+            if (realFile.exists() && realFile.canRead()) {
+                BZLogUtil.d(TAG, "file can directly read path=" + realPath);
+                return realPath;
             }
+            String[] split = fileName.split("\\.");
+            String displayName = BZMD5Util.md5(path) + "." + split[split.length - 1];
+            BZLogUtil.d(TAG, "displayName from query=" + displayName);
             String finalPath = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath() + "/" + displayName;
             File file = new File(finalPath);
             if (file.exists() && file.canRead() && file.length() > 0) {
-                BZLogUtil.d(TAG, "file can’t directly read get catch file=" + finalPath);
+                BZLogUtil.d(TAG, "file can’t directly read get catch file path=" + finalPath);
                 return finalPath;
             }
             BZFileUtils.fileCopy(context.getContentResolver().openInputStream(uri), finalPath);
-            BZLogUtil.d(TAG, "file can’t directly read finalPath=" + finalPath);
+            BZLogUtil.d(TAG, "file can’t directly read copy path=" + finalPath);
+            return finalPath;
         } catch (Throwable throwable) {
             BZLogUtil.e(TAG, throwable);
         }

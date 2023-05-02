@@ -75,7 +75,8 @@ public class FileReadWriteTestActivity extends AppCompatActivity {
                             Bitmap bitmap = BZMediaStoreUtil.loadBitmap(FileReadWriteTestActivity.this, path);
                             mImageView.setImageBitmap(bitmap);
                         }
-                        BZMediaStoreUtil.getDirectlyReadPath(FileReadWriteTestActivity.this, path, realPath);
+                        String directlyReadPath = BZMediaStoreUtil.getDirectlyReadPath(FileReadWriteTestActivity.this, path);
+                        BZLogUtil.d("directlyReadPath=" + directlyReadPath);
                     }
 
                     @Override
