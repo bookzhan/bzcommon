@@ -12,4 +12,14 @@
         <!-- 灰度 -->
         <item name="android:backgroundDimEnabled">false</item>
     </style>
+
+    <style name="task_processing_dialog" parent="@style/Theme.AppCompat.Light.Dialog">
+        <!-- 更换背景图片实现全透明 -->
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="background">@color/transparent</item>
+        <!-- 隐藏标题 -->
+        <item name="windowNoTitle">true</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
 </resources>

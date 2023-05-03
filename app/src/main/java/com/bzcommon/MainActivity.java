@@ -1,14 +1,15 @@
 package com.bzcommon;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bzcommon.utils.BZBitmapUtil;
+import com.bzcommon.utils.BZLogUtil;
 import com.bzcommon.utils.BZSpUtils;
+import com.bzcommon.widget.TaskProcessingDialog;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -23,15 +24,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void start(View view) {
-//        String finalPath = BZAssetsFileManager.getFinalPath(this, "model/pd_2_00_pts5.dat");
-//        BZLogUtil.d(TAG, finalPath);
-//
-//        String finalPath2 = BZAssetsFileManager.getFinalPath(this, "lookup.png");
-//        BZLogUtil.d(TAG, finalPath2);
-//        String readAssetsFile = BZFileUtils.readAssetsFile(this, "test.txt");
-//        BZLogUtil.d(TAG, "readAssetsFile=" + readAssetsFile);
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/bzmedia/PXL_20230416_092106677.jpg";
-        BZBitmapUtil.writePictureRotateDegree(path, 180);
+        TaskProcessingDialog taskProcessingDialog = new TaskProcessingDialog(this);
+        taskProcessingDialog.setProgress(0.3658f);
+        taskProcessingDialog.setMassage("水波纹背景是一种常见的UI效果，可以让按钮、文本框等控件在被点击时产生水波纹效果，增强用户体验");
+        taskProcessingDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                BZLogUtil.d(TAG, "onCancel");
+            }
+        });
+        taskProcessingDialog.show();
     }
 
     public void GLImageActivity(View view) {

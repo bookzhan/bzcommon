@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="260dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/shape_white_corner">
+
+    <ImageView
+        android:id="@+id/iv_delete"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_gravity="end"
+        android:background="?attr/selectableItemBackground"
+        android:padding="4dp"
+        android:src="@drawable/svg_delete"
+        tools:ignore="ContentDescription" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="12dp" />
+
+        <TextView
+            android:id="@+id/tv_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
+            android:textColor="#666"
+            android:textSize="14sp"
+            android:visibility="gone"
+            tools:text="msg" />
+
+        <TextView
+            android:id="@+id/tv_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:textColor="#000"
+            android:textSize="16sp"
+            tools:text="36.36%" />
+    </LinearLayout>
+
+</FrameLayout>
