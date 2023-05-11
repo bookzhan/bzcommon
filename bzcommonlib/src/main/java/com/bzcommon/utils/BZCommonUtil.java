@@ -12,7 +12,11 @@ import android.content.pm.Signature;
  */
 public class BZCommonUtil {
     public static boolean floatIsEqual(float a, float b) {
-        return Math.abs(a - b) < 0.00001;
+        return floatIsEqual(a, b, 0.00001f);
+    }
+
+    public static boolean floatIsEqual(float a, float b, float precision) {
+        return Math.abs(a - b) < precision;
     }
 
     /**
