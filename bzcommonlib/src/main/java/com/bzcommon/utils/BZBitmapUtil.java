@@ -1,7 +1,5 @@
 package com.bzcommon.utils;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -19,28 +17,19 @@ import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.WindowManager;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 /**
  * 图片处理的工具类，主要针对bitmap进行处理
@@ -453,6 +442,18 @@ public class BZBitmapUtil {
     }
 
 
+    public static void saveBitmapToWebpFile(Bitmap bitmap, String path) {
+        try {
+            BZFileUtils.createNewFile(path);
+            FileOutputStream fileout = new FileOutputStream(path);
+            BufferedOutputStream bufferOutStream = new BufferedOutputStream(fileout);
+            bitmap.compress(Bitmap.CompressFormat.WEBP, 100, bufferOutStream);
+            bufferOutStream.flush();
+            bufferOutStream.close();
+        } catch (Exception e) {
+            BZLogUtil.e(TAG, e);
+        }
+    }
     /**
      * 保存图片到指定的目录中
      *
