@@ -47,7 +47,7 @@ public class OnClickGestureDetector {
             case MotionEvent.ACTION_MOVE:
                 float touchDistance = distance(mDownX, mDownY, event.getX(), event.getY());
                 float viewDistance = distance(mViewDownX, mViewDownY, view.getX(), view.getY());
-                BZLogUtil.d(this, "touchDistance=" + touchDistance + " viewDistance=" + viewDistance);
+                BZLogUtil.d(this, "touchDistance=" + touchDistance + " viewDistance=" + viewDistance + " mMaxClickDistance=" + mMaxClickDistance);
                 if (touchDistance > mMaxClickDistance || viewDistance > mMaxClickDistance) {
                     mExceededMaximumDistance = true;
                 }
