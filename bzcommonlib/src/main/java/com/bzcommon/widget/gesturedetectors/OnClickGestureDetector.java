@@ -12,7 +12,7 @@ import com.bzcommon.utils.BZLogUtil;
  * description:
  */
 public class OnClickGestureDetector {
-    private int mMaxClickDistance = 50;
+    private float mMaxClickDistance = -1;
     private float mDownX, mDownY;
     private float mViewDownX, mViewDownY;
     private boolean mExceededMaximumDistance = false;
@@ -23,11 +23,14 @@ public class OnClickGestureDetector {
         mOnClickActionListener = onClickActionListener;
     }
 
-    public void setMaxClickDistance(int maxClickDistance) {
+    public void setMaxClickDistance(float maxClickDistance) {
         mMaxClickDistance = maxClickDistance;
     }
 
     public boolean onTouch(View view, MotionEvent event) {
+        if (mMaxClickDistance <= 0) {
+            mMaxClickDistance = view.getContext().getResources().getDisplayMetrics().density * 15;
+        }
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 mDownX = event.getX();
