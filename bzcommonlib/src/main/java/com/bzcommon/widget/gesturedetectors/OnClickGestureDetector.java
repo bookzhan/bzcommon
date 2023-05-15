@@ -16,10 +16,10 @@ public class OnClickGestureDetector {
     private float mDownX, mDownY;
     private boolean mExceededMaximumDistance = false;
     private boolean mMultiTouch = false;
-    private final @NonNull OnClickListener mOnClickListener;
+    private final @NonNull OnClickActionListener mOnClickActionListener;
 
-    public OnClickGestureDetector(@NonNull OnClickListener onClickListener) {
-        mOnClickListener = onClickListener;
+    public OnClickGestureDetector(@NonNull OnClickActionListener onClickActionListener) {
+        mOnClickActionListener = onClickActionListener;
     }
 
     public void setMaxClickDistance(int maxClickDistance) {
@@ -33,6 +33,7 @@ public class OnClickGestureDetector {
                 mDownY = event.getY();
                 mExceededMaximumDistance = false;
                 mMultiTouch = false;
+                mOnClickActionListener.onActionDown(view,event);
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
                 mMultiTouch = true;
@@ -46,8 +47,9 @@ public class OnClickGestureDetector {
                 break;
             case MotionEvent.ACTION_UP:
                 if (!mMultiTouch && !mExceededMaximumDistance) {
-                    mOnClickListener.onClick(view);
+                    mOnClickActionListener.onClick(view);
                 }
+                mOnClickActionListener.onActionUp(view,event);
                 break;
         }
         return true;
@@ -59,7 +61,11 @@ public class OnClickGestureDetector {
         return (float) Math.sqrt(dx * dx + dy * dy);
     }
 
-    public interface OnClickListener {
+    public interface OnClickActionListener {
+        void onActionDown(View view, MotionEvent event);
+
         void onClick(View view);
+
+        void onActionUp(View view, MotionEvent event);
     }
 }

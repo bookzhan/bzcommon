@@ -17,10 +17,20 @@ public class GestureDetectorTestActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gesture_detector_test);
-        mOnClickGestureDetector = new OnClickGestureDetector(new OnClickGestureDetector.OnClickListener() {
+        mOnClickGestureDetector = new OnClickGestureDetector(new OnClickGestureDetector.OnClickActionListener() {
+            @Override
+            public void onActionDown(View view, MotionEvent event) {
+
+            }
+
             @Override
             public void onClick(View view) {
                 BZLogUtil.d(GestureDetectorTestActivity.this, "onClick");
+            }
+
+            @Override
+            public void onActionUp(View view, MotionEvent event) {
+
             }
         });
         View view = findViewById(R.id.view);
