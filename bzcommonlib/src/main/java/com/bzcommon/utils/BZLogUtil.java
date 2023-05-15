@@ -18,7 +18,11 @@ public class BZLogUtil {
 
     public static void v(String tag, String msg) {
         if (isShowLog) {
-            android.util.Log.v(TAG_PREFIX + tag, msg);
+            if (tag.startsWith(TAG_PREFIX)) {
+                android.util.Log.v(tag, msg);
+            } else {
+                android.util.Log.v(TAG_PREFIX + tag, msg);
+            }
         }
     }
 
@@ -36,7 +40,11 @@ public class BZLogUtil {
 
     public static void d(String tag, String msg) {
         if (isShowLog) {
-            android.util.Log.d(TAG_PREFIX + tag, msg);
+            if (tag.startsWith(TAG_PREFIX)) {
+                android.util.Log.d(tag, msg);
+            } else {
+                android.util.Log.d(TAG_PREFIX + tag, msg);
+            }
         }
     }
 
@@ -54,7 +62,11 @@ public class BZLogUtil {
 
     public static void w(String tag, String msg) {
         if (isShowLog) {
-            android.util.Log.w(TAG_PREFIX + tag, msg);
+            if (tag.startsWith(TAG_PREFIX)) {
+                android.util.Log.w(tag, msg);
+            } else {
+                android.util.Log.w(TAG_PREFIX + tag, msg);
+            }
         }
     }
 
@@ -80,13 +92,21 @@ public class BZLogUtil {
      */
     public static void d(String tag, String msg, Throwable tr) {
         if (isShowLog) {
-            android.util.Log.d(TAG_PREFIX + tag, msg, tr);
+            if (tag.startsWith(TAG_PREFIX)) {
+                android.util.Log.d(tag, msg, tr);
+            } else {
+                android.util.Log.d(TAG_PREFIX + tag, msg, tr);
+            }
         }
     }
 
     public static void i(String tag, String msg) {
         if (isShowLog) {
-            android.util.Log.i(TAG_PREFIX + tag, msg);
+            if (tag.startsWith(TAG_PREFIX)) {
+                android.util.Log.i(tag, msg);
+            } else {
+                android.util.Log.i(TAG_PREFIX + tag, msg);
+            }
         }
     }
 
@@ -98,7 +118,11 @@ public class BZLogUtil {
      */
     public static void i(String tag, String msg, Throwable tr) {
         if (isShowLog) {
-            android.util.Log.i(TAG_PREFIX + tag, msg, tr);
+            if (tag.startsWith(TAG_PREFIX)) {
+                android.util.Log.i(tag, msg, tr);
+            } else {
+                android.util.Log.i(TAG_PREFIX + tag, msg, tr);
+            }
         }
 
     }
@@ -110,7 +134,11 @@ public class BZLogUtil {
      */
     public static void e(String tag, String msg) {
         if (isShowLog) {
-            android.util.Log.e(TAG_PREFIX + tag, msg);
+            if (tag.startsWith(TAG_PREFIX)) {
+                android.util.Log.e(tag, msg);
+            } else {
+                android.util.Log.e(TAG_PREFIX + tag, msg);
+            }
         }
     }
 
@@ -134,7 +162,11 @@ public class BZLogUtil {
      */
     public static void e(String tag, String msg, Throwable tr) {
         if (isShowLog) {
-            android.util.Log.e(TAG_PREFIX + tag, msg, tr);
+            if (tag.startsWith(TAG_PREFIX)) {
+                android.util.Log.e(tag, msg, tr);
+            } else {
+                android.util.Log.e(TAG_PREFIX + tag, msg, tr);
+            }
         }
     }
 
