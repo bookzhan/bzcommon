@@ -37,7 +37,7 @@ public class BZMediaStoreUtil {
         }
         //无论如何低版本都需要申请权限
         //低版本直接copy,否则有兼容问题
-        String name = "IMG_" + System.currentTimeMillis() + ".jpg";
+        String name = "IMG_" + System.currentTimeMillis() + ".png";
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
             boolean hasPermission = BZPermissionUtil.requestPermissionIfNot(
                     (AppCompatActivity) context,
@@ -48,7 +48,7 @@ public class BZMediaStoreUtil {
                 return null;
             }
             String imagePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_PICTURES + "/" + name;
-            BZBitmapUtil.saveBitmapToSDcard(bitmap, imagePath);
+            BZBitmapUtil.saveBitmapToFile(bitmap, imagePath);
             Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             Uri uri = Uri.fromFile(new File(imagePath));
             intent.setData(uri);
@@ -57,11 +57,11 @@ public class BZMediaStoreUtil {
         }
         try {
             ContentValues contentValues = new ContentValues();
-            contentValues.put(MediaStore.Video.Media.DISPLAY_NAME, name);
-            contentValues.put(MediaStore.Video.Media.MIME_TYPE, "image/jpeg");
+            contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, name);
+            contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
             Uri insertUri = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
             OutputStream outputStream = context.getContentResolver().openOutputStream(insertUri);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
             outputStream.close();
             return insertUri.toString();
         } catch (Throwable e) {
