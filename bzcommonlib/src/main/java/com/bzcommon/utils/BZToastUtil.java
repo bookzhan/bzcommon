@@ -2,9 +2,15 @@ package com.bzcommon.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.View;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+
+import java.lang.reflect.Field;
 
 
 /**
@@ -14,7 +20,7 @@ import android.widget.Toast;
 public class BZToastUtil {
     @SuppressLint("StaticFieldLeak")
     private static Context context;
-    private static Handler handler = new Handler(Looper.getMainLooper());
+    private static final Handler handler = new Handler(Looper.getMainLooper());
     private static final String TAG = "bz_BZToastUtil";
 
     public static void init(Context context) {
@@ -31,14 +37,28 @@ public class BZToastUtil {
             return;
         }
         if (Looper.myLooper() != Looper.getMainLooper()) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(context, content, duration).show();
-                }
+            handler.post(() -> {
+                Toast toast = Toast.makeText(context, content, duration);
+                setContextCompat(toast.getView(), context);
+                toast.show();
             });
         } else {
-            Toast.makeText(context, content, duration).show();
+            Toast toast = Toast.makeText(context, content, duration);
+            setContextCompat(toast.getView(), context);
+            toast.show();
+        }
+    }
+
+    private static void setContextCompat(@NonNull View view, @NonNull Context context) {
+        if (Build.VERSION.SDK_INT == 25) {
+            try {
+                @SuppressLint("DiscouragedPrivateApi")
+                Field field = View.class.getDeclaredField("mContext");
+                field.setAccessible(true);
+                field.set(view, context);
+            } catch (Throwable throwable) {
+                BZLogUtil.e(throwable);
+            }
         }
     }
 }
