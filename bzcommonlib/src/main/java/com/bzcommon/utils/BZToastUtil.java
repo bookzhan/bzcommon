@@ -8,8 +8,6 @@ import android.os.Looper;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
 import java.lang.reflect.Field;
 
 
@@ -49,7 +47,10 @@ public class BZToastUtil {
         }
     }
 
-    private static void setContextCompat(@NonNull View view, @NonNull Context context) {
+    private static void setContextCompat(View view, Context context) {
+        if (null == view || null == context) {
+            return;
+        }
         if (Build.VERSION.SDK_INT == 25) {
             try {
                 @SuppressLint("DiscouragedPrivateApi")
