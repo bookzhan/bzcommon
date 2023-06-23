@@ -1,10 +1,13 @@
 package com.bzcommon.utils;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+
+import java.util.List;
 
 /**
  * Created by bookzhan on 2023−01-25 17:49.
@@ -34,4 +37,20 @@ public class BZCommonUtil {
         return null;
     }
 
+    public static boolean isMainProcess(Context context) {
+        if (null == context) {
+            return false;
+        }
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> runningProcesses = activityManager.getRunningAppProcesses();
+        String packageName = context.getPackageName();
+        boolean isMainProcess = false;
+        for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+            if (processInfo.processName.equals(packageName) && processInfo.pid == android.os.Process.myPid()) {
+                isMainProcess = true;
+                break;
+            }
+        }
+        return isMainProcess;
+    }
 }
