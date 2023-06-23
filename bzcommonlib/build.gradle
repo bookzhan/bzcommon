@@ -33,14 +33,14 @@ android {
 ext {
     NEXUS_USER = ''
     NEXUS_PASSWORD = ''
-    RELEASE_SNAPSHOT = true
+    RELEASE_SNAPSHOT = false
 
     POM_URL_SNAP = 'https://www.raoyunsoft.com/nexus/repository/maven-snapshots/'
     POM_URL = 'https://www.raoyunsoft.com/nexus/repository/maven-releases/'
 
     POM_GROUP_ID = 'com.guaishou.bzlib'
     POM_ATRIFACT_ID = 'bzcommon'
-    POM_VERSION = '1.1.38'
+    POM_VERSION = '1.1.39'
 }
 if (System.getenv('NEXUS_USER')) {
     NEXUS_USER = System.getenv('NEXUS_USER')
