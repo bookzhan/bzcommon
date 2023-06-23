@@ -23,7 +23,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void start(View view) {
 //        startActivity(new Intent(this, GestureDetectorTestActivity.class));
-        startActivity(new Intent(this, WebViewActivity.class));
+        Intent intent = new Intent(this, WebViewActivity.class);
+        intent.putExtra(WebViewActivity.KEY_URL, "https://arrowmark.com/apps/collagemaker2/policy.html");
+        startActivity(intent);
     }
 
     public void GLImageActivity(View view) {
