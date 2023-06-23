@@ -16,6 +16,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.luoye.bzcommonlib.R;
 
 public class WebViewActivity extends AppCompatActivity {
+    public static final String KEY_URL = "url";
+    public static final String KEY_SHOW_ACTION_BAR = "showActionBar";
+    public static final String KEY_PAGE_TITLE = "pageTitle";
+    public static final String KEY_SHOW_LOADING = "showLoading";
     private WebView webView;
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -24,9 +28,9 @@ public class WebViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
         Intent intent = getIntent();
-        String url = intent.getStringExtra("url");
-        boolean showActionBar = intent.getBooleanExtra("showActionBar", true);
-        String pageTitle = intent.getStringExtra("pageTitle");
+        String url = intent.getStringExtra(KEY_URL);
+        boolean showActionBar = intent.getBooleanExtra(KEY_SHOW_ACTION_BAR, true);
+        String pageTitle = intent.getStringExtra(KEY_PAGE_TITLE);
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             if (showActionBar) {
@@ -36,7 +40,7 @@ public class WebViewActivity extends AppCompatActivity {
             }
             supportActionBar.setTitle(pageTitle);
         }
-        boolean showLoading = intent.getBooleanExtra("showLoading", true);
+        boolean showLoading = intent.getBooleanExtra(KEY_SHOW_LOADING, true);
         SwipeRefreshLayout swipe_refresh_layout = findViewById(R.id.swipe_refresh_layout);
         swipe_refresh_layout.setEnabled(showLoading);
         swipe_refresh_layout.setOnRefreshListener(() -> webView.reload());
