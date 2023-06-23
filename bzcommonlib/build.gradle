@@ -33,7 +33,7 @@ android {
 ext {
     NEXUS_USER = ''
     NEXUS_PASSWORD = ''
-    RELEASE_SNAPSHOT = false
+    RELEASE_SNAPSHOT = true
 
     POM_URL_SNAP = 'https://www.raoyunsoft.com/nexus/repository/maven-snapshots/'
     POM_URL = 'https://www.raoyunsoft.com/nexus/repository/maven-releases/'
@@ -80,5 +80,8 @@ task androidSourcesJar(type: Jar) {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.3.0'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 }

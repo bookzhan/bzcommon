@@ -6,6 +6,7 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bzcommon.activity.WebViewActivity;
 import com.bzcommon.utils.BZSpUtils;
 
 
@@ -21,7 +22,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void start(View view) {
-        startActivity(new Intent(this, GestureDetectorTestActivity.class));
+//        startActivity(new Intent(this, GestureDetectorTestActivity.class));
+        startActivity(new Intent(this, WebViewActivity.class));
     }
 
     public void GLImageActivity(View view) {
