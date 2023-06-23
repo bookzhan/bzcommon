@@ -43,6 +43,9 @@ public class WebViewActivity extends AppCompatActivity {
         boolean showLoading = intent.getBooleanExtra(KEY_SHOW_LOADING, true);
         SwipeRefreshLayout swipe_refresh_layout = findViewById(R.id.swipe_refresh_layout);
         swipe_refresh_layout.setEnabled(showLoading);
+        if (showLoading) {
+            swipe_refresh_layout.setRefreshing(true);
+        }
         swipe_refresh_layout.setOnRefreshListener(() -> webView.reload());
 
         webView = findViewById(R.id.web_view);
