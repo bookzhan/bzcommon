@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
@@ -44,7 +45,7 @@ public class BZToastUtil {
 
     private static void makeToast(String content, int duration) {
         //防止短时间重复调用
-        if (null == context || null != mToast) {
+        if (TextUtils.isEmpty(content) || null == context || null != mToast) {
             return;
         }
         mToast = Toast.makeText(context, content, duration);
