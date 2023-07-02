@@ -6,8 +6,8 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bzcommon.activity.WebViewActivity;
 import com.bzcommon.utils.BZSpUtils;
+import com.bzcommon.utils.BZToastUtil;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -19,13 +19,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         BZSpUtils.init(getApplicationContext());
+        BZToastUtil.init(getApplicationContext());
     }
 
     public void start(View view) {
 //        startActivity(new Intent(this, GestureDetectorTestActivity.class));
-        Intent intent = new Intent(this, WebViewActivity.class);
-        intent.putExtra(WebViewActivity.KEY_URL, "https://arrowmark.com/apps/collagemaker2/policy.html");
-        startActivity(intent);
+//        Intent intent = new Intent(this, WebViewActivity.class);
+//        intent.putExtra(WebViewActivity.KEY_URL, "https://arrowmark.com/apps/collagemaker2/policy.html");
+//        startActivity(intent);
+        BZToastUtil.showToast("BZToastUtil test " + System.currentTimeMillis());
     }
 
     public void GLImageActivity(View view) {

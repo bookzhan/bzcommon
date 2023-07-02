@@ -20,6 +20,7 @@ public class BZToastUtil {
     private static Context context;
     private static final Handler handler = new Handler(Looper.getMainLooper());
     private static final String TAG = "bz_BZToastUtil";
+    private static Toast mToast;
 
     public static void init(Context context) {
         BZToastUtil.context = context.getApplicationContext();
@@ -35,16 +36,36 @@ public class BZToastUtil {
             return;
         }
         if (Looper.myLooper() != Looper.getMainLooper()) {
-            handler.post(() -> {
-                Toast toast = Toast.makeText(context, content, duration);
-                setContextCompat(toast.getView(), context);
-                toast.show();
+            handler.post(() -> makeToast(content, duration));
+        } else {
+            makeToast(content, duration);
+        }
+    }
+
+    private static void makeToast(String content, int duration) {
+        //防止短时间重复调用
+        if (null == context || null != mToast) {
+            return;
+        }
+        mToast = Toast.makeText(context, content, duration);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            mToast.addCallback(new Toast.Callback() {
+                @Override
+                public void onToastShown() {
+                    super.onToastShown();
+                }
+
+                @Override
+                public void onToastHidden() {
+                    super.onToastHidden();
+                    mToast = null;
+                }
             });
         } else {
-            Toast toast = Toast.makeText(context, content, duration);
-            setContextCompat(toast.getView(), context);
-            toast.show();
+            handler.postDelayed(() -> mToast = null, 2000);
         }
+        setContextCompat(mToast.getView(), context);
+        mToast.show();
     }
 
     private static void setContextCompat(View view, Context context) {
