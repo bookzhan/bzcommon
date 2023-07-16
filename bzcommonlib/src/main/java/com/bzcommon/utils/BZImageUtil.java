@@ -54,4 +54,18 @@ public class BZImageUtil {
         canvas.drawBitmap(bitmap, 0, 0, new Paint());
         return bitmapCanvas;
     }
+
+    public static Bitmap processBitmap(Context context, Bitmap bitmap, int rotate, boolean flipHorizontal, boolean flipVertical) {
+        if (null == context || null == bitmap || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
+            return null;
+        }
+        Bitmap bitmapCanvas = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmapCanvas);
+        canvas.scale(flipHorizontal ? -1 : 1, flipVertical ? -1 : 1, bitmap.getWidth() / 2f, bitmap.getHeight() / 2f);
+        if (rotate > 0) {
+            canvas.rotate(rotate, bitmap.getWidth() / 2f, bitmap.getHeight() / 2f);
+        }
+        canvas.drawBitmap(bitmap, 0, 0, new Paint());
+        return bitmapCanvas;
+    }
 }
