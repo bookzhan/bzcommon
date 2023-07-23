@@ -32,9 +32,7 @@ public class BZAssetsFileManager {
             if (new File(finalPath).exists()) {
                 return finalPath;
             }
-            BZFileUtils.createNewFile(finalPath);
-
-            BZFileUtils.fileCopy(context.getAssets().open(path), finalPath);
+            copyFile(context.getAssets(), path, finalPath);
             return finalPath;
         } catch (Throwable e) {
             BZLogUtil.e(TAG, e);
@@ -106,7 +104,7 @@ public class BZAssetsFileManager {
         return false;
     }
 
-    private static void copyFile(AssetManager assetManager, String sourcePath, String destinationPath) {
+    private static synchronized void copyFile(AssetManager assetManager, String sourcePath, String destinationPath) {
         InputStream inputStream = null;
         FileOutputStream outputStream = null;
         try {
