@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -116,8 +115,8 @@ public class BZAssetsFileManager {
                 if (outputStream != null) {
                     outputStream.close();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+            }  catch (Throwable e) {
+                BZLogUtil.e(TAG, e);
             }
         }
     }
