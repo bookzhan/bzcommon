@@ -29,9 +29,10 @@ public class BZAssetsFileManager {
         try {
             String fileDirPath = context.getFilesDir().getAbsolutePath();
             String finalPath = fileDirPath + "/" + OUT_DIR_NAME + "/" + path;
-            if (new File(finalPath).exists()) {
+            if (BZFileUtils.fileIsEnable(finalPath)) {
                 return finalPath;
             }
+            BZLogUtil.d(TAG, "getFinalPath copyFile path=" + path);
             copyFile(context.getAssets(), path, finalPath);
             return finalPath;
         } catch (Throwable e) {
