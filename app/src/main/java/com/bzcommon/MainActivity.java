@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
         String finalPath = BZAssetsFileManager.getFinalPath(this, "model/pd_2_00_pts5.dat");
         BZLogUtil.d(TAG, "finalPath=" + finalPath);
-        BZAssetsFileManager.copyAllFile(this);
+        BZAssetsFileManager.copyAllFileByEachVersion(this, BuildConfig.VERSION_CODE);
     }
 
     public void GLImageActivity(View view) {

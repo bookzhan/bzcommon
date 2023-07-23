@@ -42,12 +42,22 @@ public class BZAssetsFileManager {
         return path;
     }
 
-    public static void copyAllFile(@NonNull Context context) {
+    public static void copyAllFileByEachVersion(@NonNull Context context, int currentVersionCode) {
+        BZSpUtils.init(context);
+        final String key = "lastCopyAssetsFileVersionCode";
+        int lastCopyAssetsFileVersionCode = BZSpUtils.getInt(key, 0);
+        boolean forceUpdate = currentVersionCode > lastCopyAssetsFileVersionCode;
+        copyAllFile(context, forceUpdate);
+        BZSpUtils.put(key, currentVersionCode);
+        BZLogUtil.d(TAG, "copyAllFileByEachVersion forceUpdate=" + forceUpdate + " lastCopyAssetsFileVersionCode=" + lastCopyAssetsFileVersionCode + " currentVersionCode=" + currentVersionCode);
+    }
+
+    public static void copyAllFile(@NonNull Context context, boolean forceUpdate) {
         Context applicationContext = context.getApplicationContext();
         new Thread(() -> {
             try {
                 long currentTimeMillis = System.currentTimeMillis();
-                copyAssets(applicationContext, "", applicationContext.getFilesDir().getAbsolutePath() + "/" + OUT_DIR_NAME);
+                copyAssets(applicationContext, "", applicationContext.getFilesDir().getAbsolutePath() + "/" + OUT_DIR_NAME, forceUpdate);
                 BZLogUtil.d(TAG, "copyAllFile finish cost time=" + (System.currentTimeMillis() - currentTimeMillis));
             } catch (Throwable e) {
                 BZLogUtil.e(TAG, e);
@@ -56,6 +66,10 @@ public class BZAssetsFileManager {
     }
 
     public static void copyAssets(Context context, String assetsPath, String destinationPath) {
+        copyAssets(context, assetsPath, destinationPath, true);
+    }
+
+    public static void copyAssets(Context context, String assetsPath, String destinationPath, boolean forceUpdate) {
         AssetManager assetManager = context.getAssets();
         try {
             String[] assetsList = assetManager.list(assetsPath);
@@ -68,8 +82,8 @@ public class BZAssetsFileManager {
                     String newDestinationPath = destinationPath + File.separator + asset;
                     if (isDirectory(assetManager, sourcePath)) {
                         // 递归复制子目录的文件
-                        copyAssets(context, sourcePath, newDestinationPath);
-                    } else {
+                        copyAssets(context, sourcePath, newDestinationPath, forceUpdate);
+                    } else if (BZFileUtils.fileIsEnable(destinationPath) && forceUpdate) {
                         // 复制文件
                         BZLogUtil.d(TAG, "copyFile sourcePath=" + sourcePath);
                         BZLogUtil.d(TAG, "copyFile destinationPath=" + newDestinationPath);
@@ -115,7 +129,7 @@ public class BZAssetsFileManager {
                 if (outputStream != null) {
                     outputStream.close();
                 }
-            }  catch (Throwable e) {
+            } catch (Throwable e) {
                 BZLogUtil.e(TAG, e);
             }
         }
