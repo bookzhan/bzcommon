@@ -68,6 +68,7 @@ public class BZAssetsFileManager {
         copyAssets(context, assetsPath, destinationPath, true);
     }
 
+
     public static void copyAssets(Context context, String assetsPath, String destinationPath, boolean forceUpdate) {
         AssetManager assetManager = context.getAssets();
         try {
@@ -82,11 +83,13 @@ public class BZAssetsFileManager {
                     if (isDirectory(assetManager, sourcePath)) {
                         // 递归复制子目录的文件
                         copyAssets(context, sourcePath, newDestinationPath, forceUpdate);
-                    } else if (BZFileUtils.fileIsEnable(destinationPath) && forceUpdate) {
-                        // 复制文件
-                        BZLogUtil.d(TAG, "copyFile sourcePath=" + sourcePath);
-                        BZLogUtil.d(TAG, "copyFile destinationPath=" + newDestinationPath);
-                        copyFile(assetManager, sourcePath, newDestinationPath);
+                    } else {
+                        if (!BZFileUtils.fileIsEnable(destinationPath) || forceUpdate) {
+                            // 复制文件
+                            BZLogUtil.d(TAG, "copyFile sourcePath=" + sourcePath);
+                            BZLogUtil.d(TAG, "copyFile destinationPath=" + newDestinationPath);
+                            copyFile(assetManager, sourcePath, newDestinationPath);
+                        }
                     }
                 }
             }
