@@ -7,7 +7,6 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bzcommon.utils.BZAssetsFileManager;
-import com.bzcommon.utils.BZLogUtil;
 import com.bzcommon.utils.BZSpUtils;
 import com.bzcommon.utils.BZToastUtil;
 
@@ -31,9 +30,9 @@ public class MainActivity extends AppCompatActivity {
 //        startActivity(intent);
 //        BZToastUtil.showToast("BZToastUtil test " + System.currentTimeMillis());
 
-        String finalPath = BZAssetsFileManager.getFinalPath(this, "model/pd_2_00_pts5.dat");
-        BZLogUtil.d(TAG, "finalPath=" + finalPath);
-        BZAssetsFileManager.copyAllFileByEachVersion(this, BuildConfig.VERSION_CODE);
+//        String finalPath = BZAssetsFileManager.getFinalPath(this, "model/pd_2_00_pts5.dat");
+//        BZLogUtil.d(TAG, "finalPath=" + finalPath);
+        BZAssetsFileManager.init(this, BuildConfig.VERSION_CODE+2);
     }
 
     public void GLImageActivity(View view) {

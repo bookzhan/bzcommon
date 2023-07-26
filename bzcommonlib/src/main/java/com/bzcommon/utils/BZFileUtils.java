@@ -414,7 +414,7 @@ public class BZFileUtils {
         File fileDir = new File(fileSavePath);
         if (!fileDir.exists()) {
             boolean mkdirs = fileDir.mkdirs();
-            BZLogUtil.d(TAG, "createNewFile mkdirs=" + mkdirs);
+            BZLogUtil.i(TAG, "createNewFile mkdirs=" + mkdirs);
         }
 
         return new File(fileDir, fileName);
