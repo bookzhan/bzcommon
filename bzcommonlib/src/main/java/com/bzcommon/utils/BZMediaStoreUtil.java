@@ -162,7 +162,7 @@ public class BZMediaStoreUtil {
             String[] split = fileName.split("\\.");
             String displayName = BZMD5Util.md5(path) + "." + split[split.length - 1];
             BZLogUtil.d(TAG, "displayName from query=" + displayName);
-            String finalPath = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath() + "/" + displayName;
+            String finalPath = context.getExternalCacheDir().getAbsolutePath() + "/" + displayName;
             File file = new File(finalPath);
             if (file.exists() && file.canRead() && file.length() > 0) {
                 BZLogUtil.d(TAG, "file can’t directly read get catch file path=" + finalPath);
