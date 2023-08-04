@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * description:
  */
 public class StrokeItemDecoration extends RecyclerView.ItemDecoration {
-    private final Paint mPaint;
+    protected final Paint mPaint;
 
     public StrokeItemDecoration(int borderSize, int color) {
         mPaint = new Paint();
