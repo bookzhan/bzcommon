@@ -1,9 +1,9 @@
 package com.bzcommon.glutils;
 
+import static android.opengl.GLES20.glGetUniformLocation;
+
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
-
-import static android.opengl.GLES20.glGetUniformLocation;
 
 /**
  * Created by zhandalin on 2021-03-10 15:09.
@@ -43,7 +43,7 @@ public class LookUpFilterProgram extends BaseProgram {
             "    lowp vec4 newColor = mix(newColor1, newColor2, fract(blueColor));\n" +
             "    gl_FragColor = vec4(newColor.rgb, textureColor.w);\n" +
             "}";
-    private float[] matrix = {1, 0, 0, 0,
+    private final float[] matrix = {1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
             0, 0, 0, 1};
@@ -75,6 +75,9 @@ public class LookUpFilterProgram extends BaseProgram {
     public void setLookUpBitmap(Bitmap bitmap) {
         if (null == bitmap || bitmap.isRecycled()) {
             return;
+        }
+        if (lookUpTexture >= 0) {
+            BZOpenGlUtils.deleteTexture(lookUpTexture);
         }
         lookUpTexture = BZOpenGlUtils.loadTexture(bitmap);
     }
