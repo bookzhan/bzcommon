@@ -43,6 +43,10 @@ public class Asyn<T> {
                 @Override
                 public void onDestroy(@NonNull LifecycleOwner owner) {
                     mIsDestroy = true;
+                    if (null != mAppCompatActivitySoftReference) {
+                        AppCompatActivity appCompatActivity = mAppCompatActivitySoftReference.get();
+                        appCompatActivity.getLifecycle().removeObserver(this);
+                    }
                     cancelTask();
                 }
             });
@@ -57,6 +61,10 @@ public class Asyn<T> {
                 @Override
                 public void onDestroy(@NonNull LifecycleOwner owner) {
                     mIsDestroy = true;
+                    if (null != mFragmentSoftReference) {
+                        Fragment fragmentTemp = mFragmentSoftReference.get();
+                        fragmentTemp.getLifecycle().removeObserver(this);
+                    }
                     cancelTask();
                 }
             });
