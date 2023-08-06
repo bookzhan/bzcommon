@@ -19,6 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".AsynTestActivity"
+            android:exported="false" />
+        <activity
             android:name=".GestureDetectorTestActivity"
             android:exported="false" />
         <activity
