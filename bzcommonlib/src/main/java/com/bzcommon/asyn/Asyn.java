@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.bzcommon.utils.BZLogUtil;
@@ -43,10 +44,7 @@ public class Asyn<T> {
                 @Override
                 public void onDestroy(@NonNull LifecycleOwner owner) {
                     mIsDestroy = true;
-                    if (null != mAppCompatActivitySoftReference) {
-                        AppCompatActivity appCompatActivity = mAppCompatActivitySoftReference.get();
-                        appCompatActivity.getLifecycle().removeObserver(this);
-                    }
+                    removeObserver(this);
                     cancelTask();
                 }
             });
@@ -61,10 +59,7 @@ public class Asyn<T> {
                 @Override
                 public void onDestroy(@NonNull LifecycleOwner owner) {
                     mIsDestroy = true;
-                    if (null != mFragmentSoftReference) {
-                        Fragment fragmentTemp = mFragmentSoftReference.get();
-                        fragmentTemp.getLifecycle().removeObserver(this);
-                    }
+                    removeObserver(this);
                     cancelTask();
                 }
             });
@@ -106,6 +101,24 @@ public class Asyn<T> {
 
     public void fireAsynWork() {
         mSubmit = mAsynExecutor.submit(this::runTask);
+    }
+
+    private void removeObserver(LifecycleObserver observer) {
+        if (null == observer) {
+            return;
+        }
+        if (null != mAppCompatActivitySoftReference) {
+            AppCompatActivity appCompatActivity = mAppCompatActivitySoftReference.get();
+            if (null != appCompatActivity) {
+                appCompatActivity.getLifecycle().removeObserver(observer);
+            }
+        }
+        if (null != mFragmentSoftReference) {
+            Fragment fragmentTemp = mFragmentSoftReference.get();
+            if (null != fragmentTemp) {
+                fragmentTemp.getLifecycle().removeObserver(observer);
+            }
+        }
     }
 
     private void cancelTask() {
