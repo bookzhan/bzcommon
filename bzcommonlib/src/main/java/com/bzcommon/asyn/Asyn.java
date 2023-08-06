@@ -3,12 +3,12 @@ package com.bzcommon.asyn;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.DefaultLifecycleObserver;
-import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.bzcommon.utils.BZLogUtil;
@@ -22,7 +22,7 @@ import java.util.concurrent.Future;
  * Created by bookzhan on 2023−08-06 06:24.
  * description:
  */
-public class Asyn<T> {
+public class Asyn<T> implements DefaultLifecycleObserver {
     private final static String TAG = "Asyn";
     private final static ExecutorService mNetWorkExecutor = Executors.newFixedThreadPool(3);
     private final static ExecutorService mAsynExecutor = Executors.newFixedThreadPool(3);
@@ -40,14 +40,7 @@ public class Asyn<T> {
         mJob = job;
         if (null != activity) {
             mAppCompatActivitySoftReference = new SoftReference<>(activity);
-            activity.getLifecycle().addObserver(new DefaultLifecycleObserver() {
-                @Override
-                public void onDestroy(@NonNull LifecycleOwner owner) {
-                    mIsDestroy = true;
-                    removeObserver(this);
-                    cancelTask();
-                }
-            });
+            activity.getLifecycle().addObserver(this);
         }
     }
 
@@ -55,14 +48,7 @@ public class Asyn<T> {
         mJob = job;
         if (null != fragment) {
             mFragmentSoftReference = new SoftReference<>(fragment);
-            fragment.getLifecycle().addObserver(new DefaultLifecycleObserver() {
-                @Override
-                public void onDestroy(@NonNull LifecycleOwner owner) {
-                    mIsDestroy = true;
-                    removeObserver(this);
-                    cancelTask();
-                }
-            });
+            fragment.getLifecycle().addObserver(this);
         }
     }
 
@@ -103,22 +89,28 @@ public class Asyn<T> {
         mSubmit = mAsynExecutor.submit(this::runTask);
     }
 
-    private void removeObserver(LifecycleObserver observer) {
-        if (null == observer) {
-            return;
-        }
+    @MainThread
+    private void removeObserver() {
         if (null != mAppCompatActivitySoftReference) {
             AppCompatActivity appCompatActivity = mAppCompatActivitySoftReference.get();
             if (null != appCompatActivity) {
-                appCompatActivity.getLifecycle().removeObserver(observer);
+                appCompatActivity.getLifecycle().removeObserver(this);
             }
         }
         if (null != mFragmentSoftReference) {
             Fragment fragmentTemp = mFragmentSoftReference.get();
             if (null != fragmentTemp) {
-                fragmentTemp.getLifecycle().removeObserver(observer);
+                fragmentTemp.getLifecycle().removeObserver(this);
             }
         }
+        BZLogUtil.d(TAG, "removeObserver");
+    }
+
+    @Override
+    public void onDestroy(@NonNull LifecycleOwner owner) {
+        mIsDestroy = true;
+        removeObserver();
+        cancelTask();
     }
 
     private void cancelTask() {
@@ -151,11 +143,16 @@ public class Asyn<T> {
         try {
             T result = mJob.run();
             if (null != mSuccess) {
-                if (isAvailable()) {
-                    mMainHandler.post(() -> mSuccess.onSuccess(result));
-                } else {
-                    BZLogUtil.w(TAG, "runTask,isDestroy not post");
-                }
+                mMainHandler.post(() -> {
+                    if (null == mSuccess) {
+                        return;
+                    }
+                    if (isAvailable()) {
+                        mSuccess.onSuccess(result);
+                    } else {
+                        BZLogUtil.w(TAG, "runTask,isDestroy not post");
+                    }
+                });
             }
         } catch (Throwable throwable) {
             //cancelTask导致的异常,内部处理
@@ -164,12 +161,19 @@ public class Asyn<T> {
                 return;
             }
             if (null != mException) {
-                if (isAvailable()) {
-                    mMainHandler.post(() -> mException.onException(throwable));
-                } else {
-                    BZLogUtil.w(TAG, "runTask catch,isDestroy not post");
-                }
+                mMainHandler.post(() -> {
+                    if (null == mException) {
+                        return;
+                    }
+                    if (isAvailable()) {
+                        mException.onException(throwable);
+                    } else {
+                        BZLogUtil.w(TAG, "runTask catch,isDestroy not post");
+                    }
+                });
             }
+        } finally {
+            mMainHandler.post(this::removeObserver);
         }
     }
 }
