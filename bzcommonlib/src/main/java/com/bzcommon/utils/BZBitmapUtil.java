@@ -14,6 +14,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -454,6 +455,7 @@ public class BZBitmapUtil {
             BZLogUtil.e(TAG, e);
         }
     }
+
     /**
      * 保存图片到指定的目录中
      *
@@ -790,4 +792,16 @@ public class BZBitmapUtil {
         return false;
     }
 
+    public static Bitmap cropBitmap(Bitmap originalBitmap, Rect cropRect) {
+        int x = cropRect.left;
+        int y = cropRect.top;
+        int width = cropRect.width();
+        int height = cropRect.height();
+        Bitmap croppedBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(croppedBitmap);
+        Rect srcRect = new Rect(x, y, x + width, y + height);
+        Rect destRect = new Rect(0, 0, width, height);
+        canvas.drawBitmap(originalBitmap, srcRect, destRect, null);
+        return croppedBitmap;
+    }
 }
