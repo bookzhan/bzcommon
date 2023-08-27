@@ -11,6 +11,11 @@ import androidx.annotation.VisibleForTesting;
 import androidx.core.view.ViewCompat;
 import androidx.viewpager.widget.ViewPager;
 
+import com.bzcommon.utils.BZLogUtil;
+
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
+
 /**
  * Created by bookzhan on 2023−08-26 17:36.
  * description:
@@ -37,7 +42,7 @@ public class ViewPagerBottomSheetBehavior<V extends View> extends BottomSheetBeh
         }
         if (view instanceof ViewPager) {
             ViewPager viewPager = (ViewPager) view;
-            View currentViewPagerChild = viewPager.getChildAt(viewPager.getCurrentItem());
+            View currentViewPagerChild = getCurrentView(viewPager);
             if (currentViewPagerChild == null) {
                 return null;
             }
@@ -53,4 +58,33 @@ public class ViewPagerBottomSheetBehavior<V extends View> extends BottomSheetBeh
         }
         return null;
     }
+
+    public static View getCurrentView(ViewPager viewPager) {
+        int currentItem = viewPager.getCurrentItem();
+        for (int i = 0; i < viewPager.getChildCount(); ++i) {
+            View child = viewPager.getChildAt(i);
+            ViewPager.LayoutParams layoutParams = (ViewPager.LayoutParams) child.getLayoutParams();
+            Class<?> myClass = layoutParams.getClass();
+            try {
+                Field privateField = myClass.getDeclaredField("position");
+                privateField.setAccessible(true);
+                int position = (int) privateField.get(layoutParams);
+                if (!layoutParams.isDecor && currentItem == position) {
+                    return child;
+                }
+            } catch (Throwable e) {
+                BZLogUtil.e(e);
+            }
+        }
+        return null;
+    }
+
+    public void updateScrollingChild() {
+        if (viewRef == null) {
+            return;
+        }
+        final View scrollingChild = findScrollingChild(viewRef.get());
+        nestedScrollingChildRef = new WeakReference<>(scrollingChild);
+    }
+
 }
