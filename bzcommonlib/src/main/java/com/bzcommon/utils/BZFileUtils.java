@@ -342,6 +342,24 @@ public class BZFileUtils {
         return false;
     }
 
+    /**
+     * 文件移动
+     */
+    @SuppressWarnings("all")
+    public static boolean fileMove(String from, String to) {
+        try {
+            createNewFile(to);
+            FileInputStream fileInputStream = new FileInputStream(from);
+            boolean fileCopy = fileCopy(fileInputStream, new FileOutputStream(to));
+            fileInputStream.close();
+            new File((from)).delete();
+            return fileCopy;
+        } catch (Throwable e) {
+            BZLogUtil.e(e);
+        }
+        return false;
+    }
+
     @SuppressWarnings("all")
     public static boolean fileCopy(InputStream in, String to) {
         if (null == in || null == to) {
