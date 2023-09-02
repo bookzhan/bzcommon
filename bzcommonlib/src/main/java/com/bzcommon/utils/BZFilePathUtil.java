@@ -51,4 +51,12 @@ public class BZFilePathUtil {
         }
         return filesDir.getAbsolutePath() + "/IMG_" + System.nanoTime() + ".webp";
     }
+
+    public static String getFileDirPath(Context context) {
+        File filesDir = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        if (null == filesDir) {
+            filesDir = context.getFilesDir();
+        }
+        return filesDir.getAbsolutePath();
+    }
 }
