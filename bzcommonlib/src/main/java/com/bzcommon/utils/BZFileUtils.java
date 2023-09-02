@@ -352,7 +352,9 @@ public class BZFileUtils {
             FileInputStream fileInputStream = new FileInputStream(from);
             boolean fileCopy = fileCopy(fileInputStream, new FileOutputStream(to));
             fileInputStream.close();
-            new File((from)).delete();
+            if (fileCopy) {
+                new File((from)).delete();
+            }
             return fileCopy;
         } catch (Throwable e) {
             BZLogUtil.e(e);
