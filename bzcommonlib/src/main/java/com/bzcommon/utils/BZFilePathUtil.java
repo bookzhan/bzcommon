@@ -21,14 +21,34 @@ public class BZFilePathUtil {
     }
 
     public static String getAVideoPath(Context context) {
-        return context.getExternalFilesDir(Environment.DIRECTORY_MOVIES).getAbsolutePath() + "/VID_" + System.nanoTime() + ".mp4";
+        File filesDir = context.getExternalFilesDir(Environment.DIRECTORY_MOVIES);
+        if (null == filesDir) {
+            filesDir = context.getFilesDir();
+        }
+        return filesDir.getAbsolutePath() + "/VID_" + System.nanoTime() + ".mp4";
     }
 
     public static String getAAudioPath(Context context) {
-        return context.getExternalFilesDir(Environment.DIRECTORY_MUSIC).getAbsolutePath() + "/audio_" + System.nanoTime() + ".m4a";
+        File filesDir = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
+        if (null == filesDir) {
+            filesDir = context.getFilesDir();
+        }
+        return filesDir.getAbsolutePath() + "/audio_" + System.nanoTime() + ".m4a";
     }
 
     public static String getAImagePath(Context context) {
-        return context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath() + "/IMG_" + System.nanoTime() + ".jpg";
+        File filesDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        if (null == filesDir) {
+            filesDir = context.getFilesDir();
+        }
+        return filesDir.getAbsolutePath() + "/IMG_" + System.nanoTime() + ".jpg";
+    }
+
+    public static String getAWebpPath(Context context) {
+        File filesDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        if (null == filesDir) {
+            filesDir = context.getFilesDir();
+        }
+        return filesDir.getAbsolutePath() + "/IMG_" + System.nanoTime() + ".webp";
     }
 }
