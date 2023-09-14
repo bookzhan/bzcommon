@@ -131,7 +131,7 @@ public class FileReadWriteTestActivity extends AppCompatActivity {
             return;   
         }
         String finalPath = BZAssetsFileManager.getFinalPath(this, "video_test.mp4");
-        String saveVideo = BZMediaStoreUtil.saveVideoToSdcard(this, finalPath);
+        String saveVideo = BZMediaStoreUtil.saveVideoToSdcard(this, finalPath,1080,1080,12000);
         BZLogUtil.d("path=" + saveVideo);
     }
 }
