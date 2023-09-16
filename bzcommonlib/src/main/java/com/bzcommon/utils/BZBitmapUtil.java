@@ -19,6 +19,7 @@ import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.util.Log;
+import android.util.Size;
 import android.view.Display;
 import android.view.View;
 import android.view.View.MeasureSpec;
@@ -581,13 +582,13 @@ public class BZBitmapUtil {
 
             opt.inSampleSize = 1;
             // 根据屏的大小和图片大小计算出缩放比例
-            Point screenSize = BZScreenUtils.getScreenSize(context);
+            Size screenSize = BZScreenUtils.getScreenSize(context);
             if (picWidth > picHeight) {
-                if (picWidth > screenSize.x)
-                    opt.inSampleSize = picWidth / screenSize.x;
+                if (picWidth > screenSize.getWidth())
+                    opt.inSampleSize = picWidth / screenSize.getWidth();
             } else {
-                if (picHeight > screenSize.y)
-                    opt.inSampleSize = picHeight / screenSize.y;
+                if (picHeight > screenSize.getHeight())
+                    opt.inSampleSize = picHeight / screenSize.getHeight();
             }
             // 这次再真正地生成一个有像素的，经过缩放了的bitmap
             opt.inJustDecodeBounds = false;

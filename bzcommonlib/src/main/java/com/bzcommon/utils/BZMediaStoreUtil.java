@@ -75,7 +75,7 @@ public class BZMediaStoreUtil {
      * @return file uri or path
      */
     @SuppressWarnings("all")
-    public static String saveVideoToSdcard(Context context, String path, int width, int height, long duration) {
+    public static String saveVideoToSdcard(Context context, String path) {
         if (!(context instanceof AppCompatActivity) || null == path) {
             return null;
         }
@@ -103,9 +103,6 @@ public class BZMediaStoreUtil {
             ContentValues contentValues = new ContentValues();
             contentValues.put(MediaStore.Video.Media.DISPLAY_NAME, name);
             contentValues.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
-            contentValues.put(MediaStore.Video.Media.WIDTH, width);
-            contentValues.put(MediaStore.Video.Media.HEIGHT, height);
-            contentValues.put(MediaStore.Video.Media.DURATION, duration);
             Uri insertUri = context.getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues);
             OutputStream outputStream = context.getContentResolver().openOutputStream(insertUri);
             BZFileUtils.fileCopy(new FileInputStream(path), outputStream);

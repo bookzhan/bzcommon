@@ -1,8 +1,8 @@
 package com.bzcommon.utils;
 
 import android.content.Context;
-import android.graphics.Point;
 import android.util.DisplayMetrics;
+import android.util.Size;
 import android.view.WindowManager;
 
 /**
@@ -10,22 +10,11 @@ import android.view.WindowManager;
  */
 public class BZScreenUtils {
 
-
-    public static int getStatusBarHeightUseConstant(Context context) {
-        return (int) Math.ceil(25 * context.getResources().getDisplayMetrics().density);
-    }
-
-    /**
-     * @return 返回的只是可以展示类容的高度
-     */
-    public static Point getScreenSize(Context context) {
+    public static Size getScreenSize(Context context) {
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics dm = new DisplayMetrics();
         windowManager.getDefaultDisplay().getMetrics(dm);
-        Point size = new Point();
-        size.x = dm.widthPixels;
-        size.y = dm.heightPixels - getStatusBarHeight(context);
-        return size;
+        return new Size(dm.widthPixels, dm.heightPixels);
     }
 
     /**
@@ -36,16 +25,6 @@ public class BZScreenUtils {
         DisplayMetrics dm = new DisplayMetrics();
         windowManager.getDefaultDisplay().getMetrics(dm);
         return dm.widthPixels;
-    }
-
-    /**
-     * @return 屏幕的高 返回的只是可以展示类容的高度
-     */
-    public static int getScreenHeight(Context context) {
-        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics dm = new DisplayMetrics();
-        windowManager.getDefaultDisplay().getMetrics(dm);
-        return dm.heightPixels - getStatusBarHeight(context);
     }
 
 
